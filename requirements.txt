@@ -1,0 +1,5 @@
+requests
+pyyaml
+validators
+fastapi
+uvicorn
