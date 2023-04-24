@@ -1,6 +1,7 @@
 import requests
 import yaml
 import json
+import validate
 from typing import List
 
 OP_GET = "GET"
@@ -43,8 +44,10 @@ def create_calls() -> List[Call]:
             body = call['body']
         if 'headers' in call:
             headers = call['headers']
-
-        calls.append(Call(0, url, op, expect, headers, body))
+        if validate.validate_call(call):
+            calls.append(Call(0, url, op, expect, headers, body))
+        else:
+            print(f'Error validating call inside yaml file: {call}')
     return calls
 
 for call in create_calls():
