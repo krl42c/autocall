@@ -1,0 +1,18 @@
+global-url: http://localhost:8000
+
+calls:
+
+  - call:
+      url : http://localhost:8000
+      expect : 200
+      op : GET
+
+  - call:
+      url : http://localhost:8000/item
+      expect : 200
+      op : POST
+      body : '{
+        "name" : "karol",
+        "description": "Description",
+        "price" : 32
+      }'
