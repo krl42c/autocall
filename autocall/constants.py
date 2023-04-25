@@ -6,5 +6,5 @@ M_DELETE = "DELETE"
 
 METHODS = ("POST", "GET", "PUT", "DELETE")
 
-# Base config constants
+# Config constants
 DEFAULT_TIMEOUT = 300

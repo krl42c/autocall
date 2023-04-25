@@ -6,6 +6,7 @@ import printer
 from typing import List
 import constants
 
+CONFIG_TIMEOUT = 300
 
 class Call:
     def __init__(self, call_id, url, op, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT):
@@ -17,7 +18,10 @@ class Call:
         self.body = body
         self.timeout = timeout
 
-    def execute(self, print_to_console = True):
+    def execute(self, 
+                print_to_console = True,
+                print_response = False,
+                save_report = False):
         res = None
         if self.body:
             self.body = json.loads(self.body)
@@ -33,11 +37,9 @@ class Call:
 
         if print_to_console:
             printer.print_call(self.expect, self.url, self.call_id, res)
-
-with open('config.yml', encoding='utf-8') as f:
-    config = yaml.safe_load(f)
-
-
+        if print_response:
+            print(res.json(), '\n')
+            
 # FIXME: This is horribly bad
 def parse_headers(call):
     headers_str : str = "{"
@@ -49,7 +51,7 @@ def parse_headers(call):
     return headers
 
 
-def create_calls() -> List[Call]:
+def create_calls(config) -> List[Call]:
     calls = []
     for c in config['calls']:
         call = c['call']
@@ -61,7 +63,10 @@ def create_calls() -> List[Call]:
 
         body = None
         headers = None
-        
+
+        if 'timeout' in c:
+            timeout = c['timeout']
+       
         if 'body' in call:
             body = call['body']
         if 'headers' in call:
@@ -75,5 +80,3 @@ def create_calls() -> List[Call]:
             print(f'Error validating call inside yaml file: {call}')
     return calls
 
-for call in create_calls():
-    call.execute()

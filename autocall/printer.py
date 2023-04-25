@@ -16,5 +16,4 @@ def print_call(expected, url, name, res : requests.Response):
     else:
         print(f"{Fore.RED}[FAILED] Status : Got {Fore.RED}{status} Expected {expected}{Style.RESET_ALL}")
 
-    print(f"{Fore.YELLOW}Call completed in {time}{Style.RESET_ALL}\n")
-    
+    print(f"{Fore.YELLOW}[TIME] Call completed in {time}{Style.RESET_ALL}\n")
