@@ -1,18 +1,24 @@
 global-url: http://localhost:8000
+global-timeout: 300
 
 calls:
 
   - call:
+      id : "Base url"
       url : http://localhost:8000
-      expect : 200
+      expect : 404
+      headers: 
+        userid : '2222'
+        authorization : 'Bearer'
       op : GET
+      timeout: 500
 
   - call:
+      id : "Send item"
       url : http://localhost:8000/item
       expect : 200
       op : POST
       body : '{
         "name" : "karol",
         "description": "Description",
-        "price" : 32
-      }'
+        "price" : 32 }'

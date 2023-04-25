@@ -4,16 +4,11 @@ import json
 import validate
 import printer
 from typing import List
+import constants
 
-OP_GET = "GET"
-OP_POST = "POST"
-OP_PUT = "PUT"
-OP_DELETE = "DELETE"
-
-DEFAULT_TIMEOUT = 300
 
 class Call:
-    def __init__(self, call_id, url, op, expect, headers = None, body = None, timeout = DEFAULT_TIMEOUT):
+    def __init__(self, call_id, url, op, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT):
         self.call_id = call_id
         self.url = url
         self.op = op
@@ -27,17 +22,17 @@ class Call:
         if self.body:
             self.body = json.loads(self.body)
 
-        if self.op == OP_GET:
+        if self.op == constants.M_GET:
             res = requests.get(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-        elif self.op == OP_POST:
+        elif self.op == constants.M_POST:
             res = requests.post(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-        elif self.op == OP_PUT:
+        elif self.op == constants.M_PUT:
             res = requests.put(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-        elif self.op == OP_DELETE:
+        elif self.op == constants.M_DELETE:
             res = requests.delete(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
 
         if print_to_console:
-            printer.print_call(self.expect, self.call_id, res)
+            printer.print_call(self.expect, self.url, self.call_id, res)
 
 with open('config.yml', encoding='utf-8') as f:
     config = yaml.safe_load(f)
@@ -62,7 +57,7 @@ def create_calls() -> List[Call]:
         url = call['url'] 
         expect = call['expect'] 
         op = call['op']
-        timeout = DEFAULT_TIMEOUT
+        timeout = constants.DEFAULT_TIMEOUT
 
         body = None
         headers = None

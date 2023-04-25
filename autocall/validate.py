@@ -1,7 +1,6 @@
 import json
 import validators
-
-OPS = ("POST", "GET", "PUT", "DELETE") 
+import constants
 
 def validate_call(call):
     try:
@@ -12,7 +11,7 @@ def validate_call(call):
         assert int(expect)
         
         op = call['op']
-        assert op in OPS
+        assert op in constants.METHODS
 
         if 'body' in call:
             body = call['body']
