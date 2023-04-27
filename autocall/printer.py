@@ -10,10 +10,10 @@ def print_call(expected, url, name, res : requests.Response):
 
     print("--------------------------------------------------")
     print(f"{name} -- {url}\n")
+    print(f"{Fore.YELLOW}Call completed in {time}{Style.RESET_ALL}\n")
 
     if(status == expected):
         print(f"{Fore.GREEN}[PASS] Status : {Fore.GREEN}{status} OK{Style.RESET_ALL}")
     else:
         print(f"{Fore.RED}[FAILED] Status : Got {Fore.RED}{status} Expected {expected}{Style.RESET_ALL}")
 
-    print(f"{Fore.YELLOW}[TIME] Call completed in {time}{Style.RESET_ALL}\n")

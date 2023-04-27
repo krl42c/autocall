@@ -12,14 +12,19 @@ parser.add_argument('--no-out', help='Turn off console output', action="store_co
 parser.add_argument('--no-res', help='Disable response output for calls', action="store_const", dest="no_res")
 
 args = parser.parse_args()
+print(args)
 
 config_file = args.config_file if args.config_file else None
+
 no_out = args.no_out if args.no_out else None
 no_res = args.no_res if args.no_res else None
 
-print_to_console = False if no_out else True
+print(no_out)
+
+print_to_console = False if no_out != None else True
 print_responses  = False if no_res else True
 
+print(print_to_console)
 
 with open(config_file, encoding='utf-8') as file:
     config = yaml.safe_load(file)

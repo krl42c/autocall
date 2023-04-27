@@ -23,23 +23,27 @@ class Call:
                 print_response = False,
                 save_report = False):
         res = None
-        if self.body:
-            self.body = json.loads(self.body)
+        try:
+            if self.body:
+                self.body = json.loads(self.body)
+            if self.op == constants.M_GET:
+                res = requests.get(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+            elif self.op == constants.M_POST:
+                res = requests.post(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+            elif self.op == constants.M_PUT:
+                res = requests.put(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+            elif self.op == constants.M_DELETE:
+                res = requests.delete(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+            if print_to_console:
+                printer.print_call(self.expect, self.url, self.call_id, res)
+            if print_response:
+                print(res.json(), '\n')
+        except json.JSONDecodeError:
+            print(f'Error parsing request body for {self.url}')
+        except requests.RequestException:
+            print(f'Error opening connection with host {self.url}')
 
-        if self.op == constants.M_GET:
-            res = requests.get(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-        elif self.op == constants.M_POST:
-            res = requests.post(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-        elif self.op == constants.M_PUT:
-            res = requests.put(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-        elif self.op == constants.M_DELETE:
-            res = requests.delete(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
 
-        if print_to_console:
-            printer.print_call(self.expect, self.url, self.call_id, res)
-        if print_response:
-            print(res.json(), '\n')
-            
 # FIXME: This is horribly bad
 def parse_headers(call):
     headers_str : str = "{"
