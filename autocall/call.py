@@ -9,7 +9,7 @@ import constants
 CONFIG_TIMEOUT = 300
 
 class Call:
-    def __init__(self, call_id, url, method, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT):
+    def __init__(self, call_id, url, method, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT, tests = None):
         self.call_id = call_id
         self.url = url
         self.method = method
@@ -17,6 +17,7 @@ class Call:
         self.headers = headers
         self.body = body
         self.timeout = timeout
+        self.tests = tests
 
     def execute(self, 
                 print_to_console = True,
@@ -43,6 +44,11 @@ class Call:
         except requests.RequestException:
             print(f'Error opening connection with host {self.url}')
 
+    def run_tests(self):
+        assert self.tests
+        for body in self.tests:
+            self.body = body['body']
+            self.execute()
 
 # FIXME: This is horribly bad
 def parse_headers(call):
@@ -67,19 +73,22 @@ def create_calls(config) -> List[Call]:
 
         body = None
         headers = None
+        tests = None
 
         if 'timeout' in c:
             timeout = c['timeout']
-       
         if 'body' in call:
             body = call['body']
         if 'headers' in call:
             headers = parse_headers(call)
         if 'timeout' in call:
             timeout = call['timeout']
+        if 'tests' in call:
+            tests = call['tests']
+
 
         if validate.validate_call(call):
-            calls.append(Call(id, url, method, expect, headers, body, timeout))
+            calls.append(Call(id, url, method, expect, headers, body, timeout, tests))
         else:
             print(f'Error validating call inside yaml file: {call}')
     return calls

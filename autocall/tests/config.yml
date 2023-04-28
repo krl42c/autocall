@@ -2,7 +2,6 @@ global-url: http://localhost:8000
 global-timeout: 300
 
 calls:
-
   - call:
       id : "Base url"
       url : http://localhost:8000
@@ -32,7 +31,6 @@ calls:
         "name" : "karol",
         "description": "Description",
         "price" : 32 }'
-
 
   - call:
       id : "Fail test"
