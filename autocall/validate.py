@@ -10,7 +10,7 @@ def validate_call(call):
         expect = call['expect']
         assert int(expect)
         
-        op = call['op']
+        op = call['method']
         assert op in constants.METHODS
 
         if 'body' in call:

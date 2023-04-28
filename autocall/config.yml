@@ -6,19 +6,41 @@ calls:
   - call:
       id : "Base url"
       url : http://localhost:8000
-      expect : 404
+      expect : 200
       headers: 
         userid : '2222'
         authorization : 'Bearer'
-      op : GET
+      method : GET
       timeout: 500
 
   - call:
       id : "Send item"
       url : http://localhost:8000/item
       expect : 200
-      op : POST
+      method : POST
       body : '{
         "name" : "karol",
         "description": "Description",
         "price" : 32 }'
+
+  - call:
+      id : "Fail test"
+      url : http://localhost:8000/items
+      expect : 200
+      method : POST
+      body : '{
+        "name" : "karol",
+        "description": "Description",
+        "price" : 32 }'
+
+
+  - call:
+      id : "Fail test"
+      url : http://localhost:8080/items
+      expect : 200
+      method : POST
+      body : '{
+        "name" : "karol",
+        "description": "Description",
+        "price" : 32 }'
+

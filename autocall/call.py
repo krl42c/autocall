@@ -9,10 +9,10 @@ import constants
 CONFIG_TIMEOUT = 300
 
 class Call:
-    def __init__(self, call_id, url, op, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT):
+    def __init__(self, call_id, url, method, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT):
         self.call_id = call_id
         self.url = url
-        self.op = op
+        self.method = method
         self.expect = expect
         self.headers = headers
         self.body = body
@@ -22,17 +22,17 @@ class Call:
                 print_to_console = True,
                 print_response = False,
                 save_report = False):
-        res = None
+        res : requests.Response = requests.Response()
         try:
             if self.body:
                 self.body = json.loads(self.body)
-            if self.op == constants.M_GET:
+            if self.method == constants.M_GET:
                 res = requests.get(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-            elif self.op == constants.M_POST:
+            elif self.method == constants.M_POST:
                 res = requests.post(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-            elif self.op == constants.M_PUT:
+            elif self.method == constants.M_PUT:
                 res = requests.put(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
-            elif self.op == constants.M_DELETE:
+            elif self.method == constants.M_DELETE:
                 res = requests.delete(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
             if print_to_console:
                 printer.print_call(self.expect, self.url, self.call_id, res)
@@ -62,7 +62,7 @@ def create_calls(config) -> List[Call]:
         id = call['id']
         url = call['url'] 
         expect = call['expect'] 
-        op = call['op']
+        method = call['method']
         timeout = constants.DEFAULT_TIMEOUT
 
         body = None
@@ -79,7 +79,7 @@ def create_calls(config) -> List[Call]:
             timeout = call['timeout']
 
         if validate.validate_call(call):
-            calls.append(Call(id, url, op, expect, headers, body, timeout))
+            calls.append(Call(id, url, method, expect, headers, body, timeout))
         else:
             print(f'Error validating call inside yaml file: {call}')
     return calls
