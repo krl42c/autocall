@@ -1,0 +1,23 @@
+calls:calls:
+  - call:
+      bname: "Send item"
+      uri: http://localhost:8000/item
+      expect: 200
+      method: POST
+      tests:
+        - name: '{
+            "name" : "karol",
+            "description": "Description",
+            "price" : 32 }'
+        - body: '{
+            "name" : "karol",
+            "description": "Description",
+            "price" : 32 }'
+        - body: '{
+            "name" : "karol",
+            "description": "Description",
+            "price" : 32 }'
+        - body: '{
+            "name" : "karol",
+            "description": "Description",
+            "price" : 32 }'

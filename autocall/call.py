@@ -1,10 +1,9 @@
 import requests
 import yaml
 import json
-import validate
 import printer
 from typing import List
-import constants
+import constants, validator
 
 CONFIG_TIMEOUT = 300
 
@@ -87,7 +86,7 @@ def create_calls(config) -> List[Call]:
             tests = call['tests']
 
 
-        if validate.validate_call(call):
+        if validator.validate_call(call):
             calls.append(Call(id, url, method, expect, headers, body, timeout, tests))
         else:
             print(f'Error validating call inside yaml file: {call}')
