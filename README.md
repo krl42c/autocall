@@ -2,10 +2,14 @@
 
 Automatize network calls using yaml files for testing.
 
-Usage:
+---
 
-```cli
-    $ python3 autocall.py call_set.yaml
+## Usage:
+
+```python
+from autocall import call
+call_set = call.create_calls('set.yaml', encoding='utf-8')
+call.execute(call_set)
 ``````
 
 Example yaml config file:
@@ -34,6 +38,13 @@ calls:
 
 ```
 
-Output:
+---
 
-![](docs/output.png)
+## Running tests
+
+Run the run_tests.sh script, an Uvicorn server located in tests/test_server will launch and the pytest suite will be ran against it.
+
+```cli
+$ pip3 install -r requirements.txt
+$ ./run_tests.sh
+```
