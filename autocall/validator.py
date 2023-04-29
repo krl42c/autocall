@@ -16,6 +16,12 @@ def validate_call(call):
         if 'body' in call:
             body = call['body']
             assert json.loads(body)
+        
+        if 'tests' in call:
+            assert 'body' in call['tests'][0]
+            for c in call['tests']:
+                assert json.loads(c['body'])
+
 
     except KeyError:
         print('Unable to parse yaml')

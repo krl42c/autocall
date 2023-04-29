@@ -91,3 +91,7 @@ def create_calls(config) -> List[Call]:
             print(f'Error validating call inside yaml file: {call}')
     return calls
 
+
+def execute(calls):
+    for c in calls: 
+        c.execute()
