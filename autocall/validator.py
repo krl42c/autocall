@@ -1,6 +1,6 @@
 import json
 import validators
-import constants
+from . import constants
 
 def validate_call(call):
     try:
