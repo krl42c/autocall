@@ -1,9 +1,8 @@
 import requests
 import yaml
 import json
-import printer
 from typing import List
-import constants, validator
+from .import constants, validator, printer
 
 CONFIG_TIMEOUT = 300
 

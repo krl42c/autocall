@@ -21,24 +21,3 @@ calls:
         "name" : "karol",
         "description": "Description",
         "price" : 32 }'
-
-  - call:
-      id : "Fail test"
-      url : http://localhost:8000/items
-      expect : 200
-      method : POST
-      body : '{
-        "name" : "karol",
-        "description": "Description",
-        "price" : 32 }'
-
-  - call:
-      id : "Fail test"
-      url : http://localhost:8080/items
-      expect : 200
-      method : POST
-      body : '{
-        "name" : "karol",
-        "description": "Description",
-        "price" : 32 }'
-
