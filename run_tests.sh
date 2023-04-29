@@ -4,7 +4,7 @@ fi
 cd tests/test_server/
 ./start.sh  &
 cd ../../
-pytest tests
+python3 -m pytest tests
 
 # clean
 kill $(lsof -t -i:8000)
