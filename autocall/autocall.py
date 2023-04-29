@@ -14,10 +14,7 @@ print(args)
 
 config_file = args.config_file if args.config_file else None
 
-with open(config_file, encoding='utf-8') as file:
-    config = yaml.safe_load(file)
-
-call_list : call.Call = call.create_calls(config)
+call_list : call.Call = call.create_calls(config_file)
 
 for c in call_list:
     c.run_tests()

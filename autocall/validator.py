@@ -22,7 +22,6 @@ def validate_call(call):
             for c in call['tests']:
                 assert json.loads(c['body'])
 
-
     except KeyError:
         print('Unable to parse yaml')
         return False

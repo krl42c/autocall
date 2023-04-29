@@ -4,15 +4,11 @@ import requests
 import json
 from autocall import call
 
-with open("tests/mocks/parametrized.yml", encoding="utf-8") as file:
-    multiple_calls = yaml.safe_load(file)
-
-with open("tests/mocks/general.yml", encoding="utf-8") as file:
-    general = yaml.safe_load(file)
-
+MULTIPLE_CALLS = "tests/mocks/parametrized.yml"
+ALL_METHODS = "tests/mocks/general.yml"
 
 def test_multiple_calls():
-    calls = call.create_calls(multiple_calls)
+    calls = call.create_calls(MULTIPLE_CALLS)
     try:
         for c in calls:
             c.run_tests()
@@ -23,7 +19,7 @@ def test_multiple_calls():
 
 
 def test_all_methods():
-    calls = call.create_calls(general)
+    calls = call.create_calls(ALL_METHODS)
     try:
         for c in calls:
             c.execute()
