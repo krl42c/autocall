@@ -38,6 +38,31 @@ calls:
 
 ```
 
+
+```yaml
+
+calls:
+  - call:
+      id: "Send item"
+      url: http://localhost:8000/item
+      expect: 200
+      method: POST
+      tests:
+        - body: '{
+            "name" : "foo",
+            "description": "bar",
+            "price" : 32 }'
+        - body: '{
+            "name" : "foo2",
+            "description": "bar2",
+            "price" : 58 }'
+
+```
+
+CLI output:
+
+![](media/autocall_output.png)
+
 ---
 
 ## Running tests
