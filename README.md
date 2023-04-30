@@ -8,7 +8,7 @@ Automatize network calls using yaml files for testing.
 
 ```python
 from autocall import call
-call_set = call.create_calls('set.yaml', encoding='utf-8')
+call_set = call.create_calls('set.yaml')
 call.execute(call_set)
 ``````
 
