@@ -62,10 +62,10 @@ def parse_headers(call):
 def create_calls(config_file) -> List[Call]:
     with open(config_file, encoding='utf-8') as file:
         config = yaml.safe_load(file)
-
     calls = []
     for c in config['calls']:
         call = c['call']
+        is_valid = validator.validate_call(call)
         id = call['id']
         url = call['url'] 
         expect = call['expect'] 
@@ -88,7 +88,7 @@ def create_calls(config_file) -> List[Call]:
             tests = call['tests']
 
 
-        if validator.validate_call(call):
+        if is_valid:
             calls.append(Call(id, url, method, expect, headers, body, timeout, tests))
         else:
             print(f'Error validating call inside yaml file: {call}')

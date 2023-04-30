@@ -1,4 +1,4 @@
-if [[ -z "{INSTALL_PKG}" ]]; then
+if [[ -z "$INSTALL" ]]; then
     pip3 install -e .
 fi
 cd tests/test_server/
