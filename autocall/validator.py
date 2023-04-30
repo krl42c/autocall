@@ -1,6 +1,6 @@
 import json
 import validators
-
+from http import HTTPStatus
 from . import constants
 
 valid_top_level_keys = (
@@ -25,8 +25,15 @@ def validate_call(call):
         raise ACMalformedUrlException()
 
     expect = call['expect']
-    assert int(expect) #TODO: Check that expect is a valid HTTP code
-        
+
+    valid_status = False
+    for s in HTTPStatus:
+        if expect == s:
+            valid_status = True
+    
+    if not valid_status: 
+        raise ACInvalidStatusCode(expect)
+    
     op = call['method']
     if op not in constants.METHODS:
         raise ACBadHTTPMethod(f"Unrecognized HTTP method {op}")
@@ -60,3 +67,8 @@ class ACExceptedFieldMissing(Exception):
     def __init__(self, parent, excepted):
         message = f"Unexcepted field after {parent}, excepted: {excepted}"
         super().__init__(message)
+
+class ACInvalidStatusCode(Exception):
+    def __init__(self, code):
+        super().__init__(f'Invalid status code {code}')
+
