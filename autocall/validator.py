@@ -1,5 +1,6 @@
 import json
 import validators
+
 from . import constants
 
 valid_top_level_keys = (
@@ -31,14 +32,15 @@ def validate_call(call):
             assert json.loads(body)
         
         if 'tests' in call:
-            assert 'body' in call['tests'][0]
-            for c in call['tests']:
-                assert json.loads(c['body'])
-        
+            for test in call['tests']:
+                if 'body' not in test:
+                    raise ACExceptedFieldMissing('tests', 'body')
+                else:
+                    assert json.loads(test['body'])
+
         for key in call.keys():
             if key not in valid_top_level_keys:
                 raise ACUnrecognizedFieldException(f"Unrecognized field {key}")
-
 
     except KeyError:
         print('Unable to parse call')
@@ -55,4 +57,9 @@ class ACUnrecognizedFieldException(Exception):
 
 class ACBadHTTPMethod(Exception):
     def __init__(self, message):
+        super().__init__(message)
+
+class ACExceptedFieldMissing(Exception):
+    def __init__(self, parent, excepted):
+        message = f"Unexcepted field after {parent}, excepted: {excepted}"
         super().__init__(message)
