@@ -8,12 +8,13 @@ from .import constants, validator, printer
 CONFIG_TIMEOUT = 300
 
 class Call:
-    def __init__(self, call_id, url, method, expect, headers = None, body = None, timeout = constants.DEFAULT_TIMEOUT, tests = None):
+    def __init__(self, call_id, url, method, expect, headers = None, query_params = None, body = None, timeout = constants.DEFAULT_TIMEOUT, tests = None):
         self.call_id = call_id
         self.url = url
         self.method = method
         self.expect = expect
         self.headers = headers
+        self.query_params = query_params
         self.body = body
         self.timeout = timeout
         self.tests = tests
@@ -27,13 +28,13 @@ class Call:
             if self.body:
                 self.body = json.loads(self.body)
             if self.method == constants.M_GET:
-                res = requests.get(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+                res = requests.get(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
             elif self.method == constants.M_POST:
-                res = requests.post(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+                res = requests.post(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
             elif self.method == constants.M_PUT:
-                res = requests.put(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+                res = requests.put(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
             elif self.method == constants.M_DELETE:
-                res = requests.delete(self.url, headers=self.headers, json=self.body, timeout=self.timeout)
+                res = requests.delete(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
             if print_to_console:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
@@ -73,6 +74,7 @@ def create_calls(config_file) -> List[Call]:
         method = call['method']
         timeout = constants.DEFAULT_TIMEOUT
 
+        query_params = None
         body = None
         headers = None
         tests = None
@@ -83,6 +85,8 @@ def create_calls(config_file) -> List[Call]:
             body = call['body']
         if 'headers' in call:
             headers = parse_headers(call)
+        if 'params' in call:
+            query_params = call['params']
         if 'timeout' in call:
             timeout = call['timeout']
         if 'tests' in call:
@@ -90,7 +94,7 @@ def create_calls(config_file) -> List[Call]:
 
 
         if is_valid:
-            calls.append(Call(id, url, method, expect, headers, body, timeout, tests))
+            calls.append(Call(id, url, method, expect, headers, query_params, body, timeout, tests))
         else:
             print(f'Error validating call inside yaml file: {call}')
     return calls
