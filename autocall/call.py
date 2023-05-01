@@ -1,8 +1,9 @@
 import requests
 import yaml
 import json
-from threading import Thread
 from typing import List
+import os.path
+from datetime import datetime
 from .import constants, validator, printer
 
 CONFIG_TIMEOUT = 300
@@ -18,6 +19,9 @@ class Call:
         self.body = body
         self.timeout = timeout
         self.tests = tests
+
+        self.result = None
+        self.result_body = None
 
     def execute(self, 
                 print_to_console = True,
@@ -35,6 +39,10 @@ class Call:
                 res = requests.put(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
             elif self.method == constants.M_DELETE:
                 res = requests.delete(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
+
+            self.result = res.status_code
+            self.result_body = res.json()
+
             if print_to_console:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
@@ -49,6 +57,22 @@ class Call:
         for body in self.tests:
             self.body = body['body']
             self.execute()
+
+    def save_log(self, target_dir):
+        assert self.result
+        assert self.result_body
+        assert os.path.isdir(target_dir)
+
+        current_time = datetime.now().strftime("%H:%M:%S")
+        current_date = datetime.today().strftime('%Y-%m-%d')
+
+        file_name = f"autocall_log{current_date}-{current_time}"
+
+        with open(target_dir + file_name, 'w+', encoding='utf-8') as file:
+            file.write(current_time + '\n')
+            file.write(self.url + '\n')
+            file.write(self.result + '\n')
+            file.write(self.result_body + '\n')
 
 # FIXME: This is horribly bad
 def parse_headers(call):
