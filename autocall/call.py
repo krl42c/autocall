@@ -1,6 +1,7 @@
 import requests
 import yaml
 import json
+from threading import Thread
 from typing import List
 from .import constants, validator, printer
 
@@ -97,4 +98,7 @@ def create_calls(config_file) -> List[Call]:
 
 def execute(calls):
     for c in calls: 
-        c.execute()
+        if c.tests is not None:
+            c.run_tests()
+        else:
+            c.execute()

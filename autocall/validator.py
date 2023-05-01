@@ -16,7 +16,6 @@ valid_top_level_keys = (
 
 def validate_call(call):
     for key in call.keys():
-        print(key)
         if key not in valid_top_level_keys:
             raise ACUnrecognizedFieldException(f"Unrecognized field {key}")
 
@@ -40,7 +39,10 @@ def validate_call(call):
 
     if 'body' in call:
         body = call['body']
-        assert json.loads(body)
+        try:
+            json.loads(body)
+        except json.JSONDecodeError as bad_json:
+            raise bad_json
         
     if 'tests' in call:
         for test in call['tests']:
@@ -48,6 +50,10 @@ def validate_call(call):
                 raise ACExceptedFieldMissing('tests', 'body')
             else:
                 assert json.loads(test['body'])
+                try:
+                    json.loads(test['body'])
+                except json.JSONDecodeError as bad_json:
+                    raise bad_json
 
     return True
 
