@@ -9,8 +9,24 @@ from . import constants, validator, printer
 
 CONFIG_TIMEOUT = 300
 
+requests_map = {
+    constants.M_GET : requests.get,
+    constants.M_POST : requests.post,
+    constants.M_PUT : requests.put,
+    constants.M_DELETE : requests.delete
+}
+
 class Call:
-    def __init__(self, call_id, url, method, expect, headers = None, query_params = None, body = None, timeout = constants.DEFAULT_TIMEOUT, tests = None):
+    def __init__(self,
+                 call_id,
+                 url,
+                 method,
+                 expect,
+                 headers = None,
+                 query_params = None,
+                 body = None,
+                 timeout = constants.DEFAULT_TIMEOUT,
+                 tests = None):
         self.call_id = call_id
         self.url = url
         self.method = method
@@ -32,14 +48,8 @@ class Call:
         try:
             if self.body:
                 self.body = json.loads(self.body)
-            if self.method == constants.M_GET:
-                res = requests.get(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
-            elif self.method == constants.M_POST:
-                res = requests.post(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
-            elif self.method == constants.M_PUT:
-                res = requests.put(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
-            elif self.method == constants.M_DELETE:
-                res = requests.delete(self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
+
+            res = requests_map[self.method](self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
 
             self.result = res.status_code
             self.result_body = res.json()
