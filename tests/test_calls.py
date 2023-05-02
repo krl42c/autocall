@@ -11,8 +11,7 @@ UNEXCEPTED = "tests/mocks/unexcepted.yml"
 def test_multiple_calls():
     calls = call.create_calls(MULTIPLE_CALLS)
     try:
-        for c in calls:
-            c.run_tests()
+        [val.execute() for key,val in calls.items()]
     except requests.RequestException:
         pytest.fail("Request failed")
     except json.JSONDecodeError:
@@ -22,8 +21,7 @@ def test_multiple_calls():
 def test_all_methods():
     calls = call.create_calls(ALL_METHODS)
     try:
-        for c in calls:
-            c.execute()
+        [val.execute() for key,val in calls.items()]
     except requests.RequestException:
         pytest.fail("Request failed")
     except json.JSONDecodeError:
@@ -32,9 +30,10 @@ def test_all_methods():
 
 def test_unrecognized_field():
     with pytest.raises(validator.ACUnrecognizedFieldException):
-        calls = call.create_calls(UNRECOGNIZED)
+        call.create_calls(UNRECOGNIZED)
 
 
 def test_excepted_field_missing():
     with pytest.raises(validator.ACExceptedFieldMissing):
-        calls = call.create_calls(UNEXCEPTED)
+        call.create_calls(UNEXCEPTED)
+        

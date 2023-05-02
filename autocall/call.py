@@ -4,7 +4,8 @@ import json
 from typing import List
 import os.path
 from datetime import datetime
-from .import constants, validator, printer
+from colorama import Fore, Style
+from . import constants, validator, printer
 
 CONFIG_TIMEOUT = 300
 
@@ -48,9 +49,9 @@ class Call:
             if print_response:
                 print(res.json(), '\n')
         except json.JSONDecodeError:
-            print(f'Error parsing request body for {self.url}')
+            print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
         except requests.RequestException:
-            print(f'Error opening connection with host {self.url}')
+            print(f'{Fore.RED}Error opening connection with host {self.url}{Style.RESET_ALL}')
 
     def run_tests(self):
         assert self.tests
@@ -58,7 +59,8 @@ class Call:
             self.body = body['body']
             self.execute()
 
-    def save_log(self, target_dir):
+    # @TODO: Just a placeholder for now, improve it
+    def save_report(self, target_dir):
         assert self.result
         assert self.result_body
         assert os.path.isdir(target_dir)
@@ -66,15 +68,15 @@ class Call:
         current_time = datetime.now().strftime("%H:%M:%S")
         current_date = datetime.today().strftime('%Y-%m-%d')
 
-        file_name = f"autocall_log{current_date}-{current_time}"
+        file_name = f"autocall_log{current_date}.txt"
 
-        with open(target_dir + file_name, 'w+', encoding='utf-8') as file:
+        with open(target_dir + file_name, 'a+', encoding='utf-8') as file:
             file.write(current_time + '\n')
             file.write(self.url + '\n')
-            file.write(self.result + '\n')
-            file.write(self.result_body + '\n')
+            file.write(str(self.result) + '\n')
+            file.write(str(self.result_body) + '\n\n\n')
 
-# FIXME: This is horribly bad
+# @FIXME: Bad performance
 def parse_headers(call):
     headers_str : str = "{"
     for key,value in call['headers'].items():
@@ -88,7 +90,7 @@ def parse_headers(call):
 def create_calls(config_file) -> List[Call]:
     with open(config_file, encoding='utf-8') as file:
         config = yaml.safe_load(file)
-    calls = []
+    calls = {}
     for c in config['calls']:
         call = c['call']
         is_valid = validator.validate_call(call)
@@ -118,15 +120,15 @@ def create_calls(config_file) -> List[Call]:
 
 
         if is_valid:
-            calls.append(Call(id, url, method, expect, headers, query_params, body, timeout, tests))
+            calls[id] = Call(id, url, method, expect, headers, query_params, body, timeout, tests)
         else:
             print(f'Error validating call inside yaml file: {call}')
     return calls
 
 
 def execute(calls):
-    for c in calls: 
-        if c.tests is not None:
-            c.run_tests()
+    for key,val in calls.items(): 
+        if val.tests is not None:
+            val.run_tests()
         else:
-            c.execute()
+            val.execute()
