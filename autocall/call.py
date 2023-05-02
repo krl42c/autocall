@@ -71,20 +71,12 @@ class Call:
         file_name = f"autocall_log{current_date}.txt"
 
         with open(target_dir + file_name, 'a+', encoding='utf-8') as file:
-            file.write(current_time + '\n')
-            file.write(self.url + '\n')
-            file.write(str(self.result) + '\n')
+            file.write(current_time + ': ' + self.url + ' - ' + str(self.result) + '\n')
             file.write(str(self.result_body) + '\n\n\n')
 
-# @FIXME: Bad performance
+
 def parse_headers(call):
-    headers_str : str = "{"
-    for key,value in call['headers'].items():
-        headers_str += f'"{key}" : "{value}",'
-    headers_str = headers_str[:-1]
-    headers_str += "}"
-    headers = json.loads(headers_str)
-    return headers
+    return {key: value for key, value in call['headers'].items()}
 
 
 def create_calls(config_file) -> List[Call]:
