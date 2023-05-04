@@ -91,7 +91,7 @@ def parse_headers(call):
 
 def create_calls(config_file) -> List[Call]:
     with open(config_file, encoding='utf-8') as file:
-        config = yaml.safe_load(file)
+        config = yaml.load(file, Loader=yaml.UnsafeLoader)
     calls = {}
     for c in config['calls']:
         call = c['call']
