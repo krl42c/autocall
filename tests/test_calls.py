@@ -1,6 +1,7 @@
 import pytest
 import requests
 import json
+import yaml
 from autocall import call,validator
 
 MULTIPLE_CALLS = "tests/mocks/parametrized.yml"
@@ -29,11 +30,15 @@ def test_all_methods():
 
 
 def test_unrecognized_field():
-    with pytest.raises(validator.ACUnrecognizedFieldException):
-        call.create_calls(UNRECOGNIZED)
+    with pytest.raises(validator.UnrecognizedFieldException):
+        validator.validate_call(load_config_file(UNRECOGNIZED))
 
 
 def test_excepted_field_missing():
-    with pytest.raises(validator.ACExceptedFieldMissing):
-        call.create_calls(UNEXCEPTED)
-        
+    with pytest.raises(validator.ExceptedFieldMissing):
+        validator.validate_call(load_config_file(UNEXCEPTED))
+
+
+def load_config_file(config):
+    with open(config, 'r', encoding='utf-8') as file:
+        return yaml.safe_load(file)

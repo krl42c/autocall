@@ -18,11 +18,11 @@ valid_top_level_keys = (
 def validate_call(call):
     for key in call.keys():
         if key not in valid_top_level_keys:
-            raise ACUnrecognizedFieldException(f"Unrecognized field {key}")
+            raise UnrecognizedFieldException(f"Unrecognized yaml key '{key}'")
 
     url = call['url']
     if not validators.url(url):
-        raise ACMalformedUrlException()
+        raise MalformedUrlException()
 
     expect = call['expect']
 
@@ -32,11 +32,11 @@ def validate_call(call):
             valid_status = True
     
     if not valid_status: 
-        raise ACInvalidStatusCode(expect)
+        raise InvalidStatusCode(expect)
     
     op = call['method']
     if op not in constants.METHODS:
-        raise ACBadHTTPMethod(f"Unrecognized HTTP method {op}")
+        raise BadHTTPMethod(f"Unrecognized HTTP method {op}")
 
     if 'body' in call:
         body = call['body']
@@ -48,7 +48,7 @@ def validate_call(call):
     if 'tests' in call:
         for test in call['tests']:
             if 'body' not in test:
-                raise ACExceptedFieldMissing('tests', 'body')
+                raise ExceptedFieldMissing('tests', 'body')
             else:
                 assert json.loads(test['body'])
                 try:
@@ -56,26 +56,24 @@ def validate_call(call):
                 except json.JSONDecodeError as bad_json:
                     raise bad_json
 
-    return True
-
-class ACMalformedUrlException(Exception):
+class MalformedUrlException(Exception):
     def __init__(self):
         super().__init__("Malformed URL")
 
-class ACUnrecognizedFieldException(Exception):
+class UnrecognizedFieldException(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-class ACBadHTTPMethod(Exception):
+class BadHTTPMethod(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-class ACExceptedFieldMissing(Exception):
+class ExceptedFieldMissing(Exception):
     def __init__(self, parent, excepted):
         message = f"Unexcepted field after {parent}, excepted: {excepted}"
         super().__init__(message)
 
-class ACInvalidStatusCode(Exception):
+class InvalidStatusCode(Exception):
     def __init__(self, code):
         super().__init__(f'Invalid status code {code}')
 

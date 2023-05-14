@@ -95,36 +95,39 @@ def create_calls(config_file) -> List[Call]:
     calls = {}
     for c in config['calls']:
         call = c['call']
-        is_valid = validator.validate_call(call)
-        id = call['id']
+
+        name = c['id'] if 'id' in c else 'NO ID'
+
+        # Try to validate current call, if validator throws an exception skip it and continue
+        try:
+            validator.validate_call(call)
+        except validator.MalformedUrlException as malformed:
+            printer.print_err(name, malformed)
+            continue
+        except validator.UnrecognizedFieldException as unrec:
+            printer.print_err(name, unrec)
+            continue
+        except validator.BadHTTPMethod as bad_http:
+            printer.print_err(name, bad_http)
+            continue
+        except validator.ExceptedFieldMissing as field_missing:
+            printer.print_err(name, field_missing)
+            continue
+        except validator.InvalidStatusCode as invalid_status:
+            printer.print_err(name, invalid_status)
+            continue
+
         url = call['url'] 
         expect = call['expect'] 
         method = call['method']
-        timeout = constants.DEFAULT_TIMEOUT
 
-        query_params = None
-        body = None
-        headers = None
-        tests = None
+        query_params = call['params'] if 'params' in call else None
+        body = call['body'] if 'body' in call else None
+        headers = call['headers'] if 'headers' in call else None
+        tests = call['tests'] if 'tests' in call else None
+        timeout = call['timeout'] if 'timeout' in call else constants.DEFAULT_TIMEOUT
 
-        if 'timeout' in c:
-            timeout = c['timeout']
-        if 'body' in call:
-            body = call['body']
-        if 'headers' in call:
-            headers = parse_headers(call)
-        if 'params' in call:
-            query_params = call['params']
-        if 'timeout' in call:
-            timeout = call['timeout']
-        if 'tests' in call:
-            tests = call['tests']
-
-
-        if is_valid:
-            calls[id] = Call(id, url, method, expect, headers, query_params, body, timeout, tests)
-        else:
-            print(f'Error validating call inside yaml file: {call}')
+        calls[id] = Call(name, url, method, expect, headers, query_params, body, timeout, tests)
     return calls
 
 

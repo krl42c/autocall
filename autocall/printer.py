@@ -5,7 +5,6 @@ from colorama import Fore, Style
 
 def print_call(expected, url, name, res : requests.Response):
     status = res.status_code
-    content = res.json()
     time = res.elapsed
 
     print("--------------------------------------------------")
@@ -17,3 +16,6 @@ def print_call(expected, url, name, res : requests.Response):
     else:
         print(f"{Fore.RED}[FAILED] Status : Got {Fore.RED}{status} Expected {expected}{Style.RESET_ALL}")
 
+
+def print_err(call_name, exception):
+    print(f"{Fore.RED}[{call_name}: Error parsing YAML] {exception}{Style.RESET_ALL}")
