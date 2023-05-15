@@ -88,6 +88,13 @@ class Call:
 def parse_headers(call):
     return {key: value for key, value in call['headers'].items()}
 
+exceptions = (
+    validator.MalformedUrlException,
+    validator.UnrecognizedFieldException,
+    validator.BadHTTPMethod,
+    validator.ExceptedFieldMissing,
+    validator.InvalidStatusCode
+)
 
 def create_calls(config_file) -> List[Call]:
     with open(config_file, encoding='utf-8') as file:
@@ -101,31 +108,19 @@ def create_calls(config_file) -> List[Call]:
         # Try to validate current call, if validator throws an exception skip it and continue
         try:
             validator.validate_call(call)
-        except validator.MalformedUrlException as malformed:
-            printer.print_err(name, malformed)
-            continue
-        except validator.UnrecognizedFieldException as unrec:
-            printer.print_err(name, unrec)
-            continue
-        except validator.BadHTTPMethod as bad_http:
-            printer.print_err(name, bad_http)
-            continue
-        except validator.ExceptedFieldMissing as field_missing:
-            printer.print_err(name, field_missing)
-            continue
-        except validator.InvalidStatusCode as invalid_status:
-            printer.print_err(name, invalid_status)
+        except exceptions as exception:
+            printer.print_err(name, exception)
             continue
 
-        url = call['url'] 
-        expect = call['expect'] 
-        method = call['method']
+        url = call.get('url')
+        expect = call.get('expect')
+        method = call.get('method')
 
-        query_params = call['params'] if 'params' in call else None
-        body = call['body'] if 'body' in call else None
-        headers = call['headers'] if 'headers' in call else None
-        tests = call['tests'] if 'tests' in call else None
-        timeout = call['timeout'] if 'timeout' in call else constants.DEFAULT_TIMEOUT
+        query_params = call.get('params')
+        body = call.get('body')
+        headers = call.get('headers')
+        tests = call.get('tests')
+        timeout = call.get('timeout', constants.DEFAULT_TIMEOUT)
 
         calls[id] = Call(name, url, method, expect, headers, query_params, body, timeout, tests)
     return calls
