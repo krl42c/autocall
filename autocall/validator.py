@@ -16,9 +16,10 @@ valid_top_level_keys = (
 )
 
 def validate_call(call):
-    for key in call.keys():
-        if key not in valid_top_level_keys:
-            raise UnrecognizedFieldException(f"Unrecognized yaml key '{key}'")
+    keys = call.keys()
+    invalid_keys = keys - valid_top_level_keys
+    if invalid_keys:
+        raise UnrecognizedFieldException(f"Unrecognized yaml key(s): {', '.join(invalid_keys)}")
 
     url = call['url']
     if not validators.url(url):
@@ -50,7 +51,6 @@ def validate_call(call):
             if 'body' not in test:
                 raise ExceptedFieldMissing('tests', 'body')
             else:
-                assert json.loads(test['body'])
                 try:
                     json.loads(test['body'])
                 except json.JSONDecodeError as bad_json:
