@@ -18,15 +18,16 @@ requests_map = {
 
 class Call:
     def __init__(self,
-                 call_id,
-                 url,
-                 method,
-                 expect,
-                 headers = None,
-                 query_params = None,
-                 body = None,
-                 timeout = constants.DEFAULT_TIMEOUT,
-                 tests = None):
+                 call_id : str,
+                 url : str,
+                 method : str,
+                 expect : int,
+                 headers : dict = None,
+                 query_params : dict = None,
+                 body : str = None,
+                 timeout : int = constants.DEFAULT_TIMEOUT,
+                 tests : str = None,
+                 oauth : dict = None):
         self.call_id = call_id
         self.url = url
         self.method = method
@@ -36,6 +37,7 @@ class Call:
         self.body = body
         self.timeout = timeout
         self.tests = tests
+        self.oauth = oauth
 
         self.result = None
         self.result_body = None
@@ -48,6 +50,20 @@ class Call:
         try:
             if self.body:
                 self.body = json.loads(self.body)
+            
+            if self.oauth:
+                oauth_token_url = self.oauth.get('token_url')
+                oauth_query_params = {
+                    'client_id' : self.oauth.get('client_id'),
+                    'client_secret' : self.oauth.get('client_secret')
+                }
+                oauth_res = requests.post(oauth_token_url, params=oauth_query_params, timeout=constants.DEFAULT_TIMEOUT)
+                assert oauth_res.json()
+
+                if self.headers is None:
+                    self.headers = {'Authorization' : oauth_res.json()}
+                else:
+                    self.headers.update({'Authorization' : oauth_res.json()})
 
             res = requests_map[self.method](self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
 
@@ -58,6 +74,7 @@ class Call:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
                 print(res.json(), '\n')
+            print(self.headers)
         except json.JSONDecodeError:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
         except requests.RequestException:
@@ -83,7 +100,6 @@ class Call:
         with open(target_dir + file_name, 'a+', encoding='utf-8') as file:
             file.write(current_time + ': ' + self.url + ' - ' + str(self.result) + '\n')
             file.write(str(self.result_body) + '\n\n\n')
-
 
 def parse_headers(call):
     return {key: value for key, value in call['headers'].items()}
