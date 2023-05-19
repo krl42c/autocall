@@ -4,10 +4,10 @@ import json
 import yaml
 from autocall import call,validator
 
-MULTIPLE_CALLS = "tests/mocks/parametrized.yml"
-ALL_METHODS = "tests/mocks/general.yml"
-UNRECOGNIZED = "tests/mocks/unrec.yml"
-UNEXCEPTED = "tests/mocks/unexcepted.yml"
+MULTIPLE_CALLS = "tests/sets/parametrized.yml"
+ALL_METHODS = "tests/sets/general.yml"
+UNRECOGNIZED = "tests/sets/unrec.yml"
+UNEXCEPTED = "tests/sets/unexcepted.yml"
 
 def test_multiple_calls():
     calls = call.create_calls(MULTIPLE_CALLS)
@@ -31,12 +31,16 @@ def test_all_methods():
 
 def test_unrecognized_field():
     with pytest.raises(validator.UnrecognizedFieldException):
-        validator.validate_call(load_config_file(UNRECOGNIZED))
+        for c in load_config_file(UNEXCEPTED)['calls']:
+            current_call = c['call']
+            validator.validate_call(load_config_file(UNRECOGNIZED))
 
 
 def test_excepted_field_missing():
     with pytest.raises(validator.ExceptedFieldMissing):
-        validator.validate_call(load_config_file(UNEXCEPTED))
+        for c in load_config_file(UNEXCEPTED)['calls']:
+            current_call = c['call']
+            validator.validate_call(current_call)  
 
 
 def load_config_file(config):

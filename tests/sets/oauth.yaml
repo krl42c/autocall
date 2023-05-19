@@ -3,6 +3,10 @@ global-timeout: 300
 
 calls:
   - call:
+      oauth:
+        token-url: http://localhost:8000/token
+        client_id: 23238IQsdj
+        client_secret: ksaudioaud12983u2
       id : "Base url"
       url : http://localhost:8000
       expect : 200
@@ -11,13 +15,3 @@ calls:
         authorization : 'Bearer'
       method : GET
       timeout: 500
-
-  - call:
-      id : "Send item"
-      url : http://localhost:8000/item
-      expect : 200
-      method : POST
-      body : '{
-        "name" : "karol",
-        "description": "Description",
-        "price" : 32 }'

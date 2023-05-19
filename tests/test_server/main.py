@@ -15,3 +15,7 @@ async def root():
 @app.post("/item")
 async def create_item(item : Item):
     return item
+
+@app.post("/token")
+async def token(client_id : str = "", client_secret=""):
+    return "asd82732863hjnhsud8s787012938Ckwjhdns/DSWWED"
