@@ -12,7 +12,8 @@ valid_top_level_keys = (
     'tests', 
     'headers', 
     'timeout',
-    'params'
+    'params',
+    'oauth'
 )
 
 def validate_call(call):
