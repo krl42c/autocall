@@ -59,10 +59,6 @@ calls:
 
 ```
 
-CLI output:
-
-![](media/autocall_output.png)
-
 ---
 
 ## Running tests
