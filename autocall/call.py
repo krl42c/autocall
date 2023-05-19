@@ -52,7 +52,7 @@ class Call:
                 self.body = json.loads(self.body)
             
             if self.oauth:
-                oauth_token_url = self.oauth.get('token_url')
+                oauth_token_url = self.oauth.get('token-url')
                 oauth_query_params = {
                     'client_id' : self.oauth.get('client_id'),
                     'client_secret' : self.oauth.get('client_secret')
@@ -61,10 +61,11 @@ class Call:
                 assert oauth_res.json()
 
                 if self.headers is None:
-                    self.headers = {'Authorization' : oauth_res.json()}
+                    self.headers = {'Authorization' : "Bearer" + oauth_res.json()}
                 else:
-                    self.headers.update({'Authorization' : oauth_res.json()})
+                    self.headers.update({'Authorization' : "Bearer " + (oauth_res.json())})
 
+            print(self.headers)
             res = requests_map[self.method](self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
 
             self.result = res.status_code
@@ -74,11 +75,12 @@ class Call:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
                 print(res.json(), '\n')
-            print(self.headers)
         except json.JSONDecodeError:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
-        except requests.RequestException:
+        except requests.RequestException as req_exception:
             print(f'{Fore.RED}Error opening connection with host {self.url}{Style.RESET_ALL}')
+            print(req_exception)
+
 
     def run_tests(self):
         assert self.tests
@@ -137,8 +139,9 @@ def create_calls(config_file) -> List[Call]:
         headers = call.get('headers')
         tests = call.get('tests')
         timeout = call.get('timeout', constants.DEFAULT_TIMEOUT)
+        oauth = call.get('oauth')
 
-        calls[id] = Call(name, url, method, expect, headers, query_params, body, timeout, tests)
+        calls[id] = Call(name, url, method, expect, headers, query_params, body, timeout, tests, oauth=oauth)
     return calls
 
 
