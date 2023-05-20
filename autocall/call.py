@@ -45,8 +45,7 @@ class Call:
     def execute(self, 
                 print_to_console = True,
                 print_response = False,
-                save_report = False, 
-                report_target : str = None):
+                ):
         res : requests.Response = requests.Response()
         try:
             if self.body:
@@ -76,10 +75,6 @@ class Call:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
                 print(res.json(), '\n')
-
-            if save_report:
-                if report_target:
-                    reporter.write_default(report_target, self)
 
         except json.JSONDecodeError:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
