@@ -1,0 +1,15 @@
+INFO:     Will watch for changes in these directories: ['/Users/karol/dev/autocall/tests/test_server']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [70433] using WatchFiles
+INFO:     Started server process [70435]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:63889 - "POST /item HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:63891 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63893 - "POST /token?client_id=23238IQsdj&client_secret=ksaudioaud12983u2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63895 - "GET / HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [70435]
+INFO:     Stopping reloader process [70433]

@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 import yaml
-from autocall import call,validator
+from autocall import autocall,validator
 
 MULTIPLE_CALLS = "tests/sets/parametrized.yml"
 ALL_METHODS = "tests/sets/general.yml"
@@ -10,7 +10,7 @@ UNRECOGNIZED = "tests/sets/unrec.yml"
 UNEXCEPTED = "tests/sets/unexcepted.yml"
 
 def test_multiple_calls():
-    calls = call.create_calls(MULTIPLE_CALLS)
+    calls = autocall.create_calls(MULTIPLE_CALLS)
     try:
         [val.execute() for key,val in calls.items()]
     except requests.RequestException:
@@ -20,7 +20,7 @@ def test_multiple_calls():
 
 
 def test_all_methods():
-    calls = call.create_calls(ALL_METHODS)
+    calls = autocall.create_calls(ALL_METHODS)
     try:
         [val.execute() for key,val in calls.items()]
     except requests.RequestException:

@@ -1,0 +1,33 @@
+global-url: http://localhost:8000
+global-timeout: 300
+
+calls:
+  - call:
+      url : http://localhost:8000
+      expect : 200
+      headers: 
+        userid : '2222'
+        authorization : 'Bearer'
+      method : GET
+      timeout: 500
+
+  - call:
+      id : "send_item"
+      url : http://localhost:8000/item
+      expect : 200
+      method : POST
+      body : '{
+        "name" : "karol",
+        "description": "Description",
+        "price" : 32 }'
+  - call:
+      id : "ddg"
+      url : http://localhost:8000/item
+      expect : 200
+      method : POST
+      dynamic: true
+      body : '{
+        "name" : "@send_item.res.name",
+        "description": "@send_item.req.name",
+        "price" : 32 }'
+
