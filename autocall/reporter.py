@@ -1,7 +1,5 @@
 from datetime import datetime
-from . import call as ac
-
-whitespace = " "
+from autocall import call as ac
 
 def current_time() -> str:
     return datetime.now().strftime("%H:%M:%S")
@@ -13,23 +11,21 @@ def make_entry(call_rep : ac.Call,
                log_time = True,
     ) -> str:
     t : str = current_time()
-    entry = ' '.join([t, call_rep.url])
+    entry_parts = [t, call_rep.url]
 
     if log_result_code:
         assert call_rep.result
-        entry = entry + whitespace + call_rep.result + whitespace
+        entry_parts.append(call_rep.result)
     
     if log_response:
         assert call_rep.result_body
-        entry = entry + whitespace + call_rep.result_body + whitespace
+        entry_parts.append(call_rep.result_body)
    
     if log_request_body:
         assert call_rep.body
-        entry = entry + whitespace + call_rep.body + whitespace
+        entry_parts.append(call_rep.body)
 
-    if log_time:
-        entry = entry + whitespace + t + whitespace
-    
+    entry = ' '.join(entry_parts)
     return entry
 
 
