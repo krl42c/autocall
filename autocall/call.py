@@ -5,9 +5,7 @@ from typing import List
 import os.path
 from datetime import datetime
 from colorama import Fore, Style
-from . import constants, validator, printer
-
-CONFIG_TIMEOUT = 300
+from . import constants, validator, printer 
 
 requests_map = {
     constants.M_GET : requests.get,
@@ -27,7 +25,8 @@ class Call:
                  body : str = None,
                  timeout : int = constants.DEFAULT_TIMEOUT,
                  tests : str = None,
-                 oauth : dict = None):
+                 oauth : dict = None,
+                 dynamic : bool = False):
         self.call_id = call_id
         self.url = url
         self.method = method
@@ -38,6 +37,7 @@ class Call:
         self.timeout = timeout
         self.tests = tests
         self.oauth = oauth
+        self.dynamic = dynamic
 
         self.result = None
         self.result_body = None
@@ -45,12 +45,13 @@ class Call:
     def execute(self, 
                 print_to_console = True,
                 print_response = False,
-                save_report = False):
+                save_report = False, 
+                report_target : str = None):
         res : requests.Response = requests.Response()
         try:
             if self.body:
                 self.body = json.loads(self.body)
-            
+
             if self.oauth:
                 oauth_token_url = self.oauth.get('token-url')
                 oauth_query_params = {
@@ -75,6 +76,11 @@ class Call:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
                 print(res.json(), '\n')
+
+            if save_report:
+                if report_target:
+                    reporter.write_default(report_target, self)
+
         except json.JSONDecodeError:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
         except requests.RequestException as req_exception:
@@ -102,52 +108,3 @@ class Call:
         with open(target_dir + file_name, 'a+', encoding='utf-8') as file:
             file.write(current_time + ': ' + self.url + ' - ' + str(self.result) + '\n')
             file.write(str(self.result_body) + '\n\n\n')
-
-def parse_headers(call):
-    return {key: value for key, value in call['headers'].items()}
-
-exceptions = (
-    validator.MalformedUrlException,
-    validator.UnrecognizedFieldException,
-    validator.BadHTTPMethod,
-    validator.ExceptedFieldMissing,
-    validator.InvalidStatusCode
-)
-
-def create_calls(config_file) -> List[Call]:
-    with open(config_file, encoding='utf-8') as file:
-        config = yaml.load(file, Loader=yaml.UnsafeLoader)
-    calls = {}
-    for c in config['calls']:
-        call = c['call']
-
-        name = c['id'] if 'id' in c else 'NO ID'
-
-        # Try to validate current call, if validator throws an exception skip it and continue
-        try:
-            validator.validate_call(call)
-        except exceptions as exception:
-            printer.print_err(name, exception)
-            continue
-
-        url = call.get('url')
-        expect = call.get('expect')
-        method = call.get('method')
-
-        query_params = call.get('params')
-        body = call.get('body')
-        headers = call.get('headers')
-        tests = call.get('tests')
-        timeout = call.get('timeout', constants.DEFAULT_TIMEOUT)
-        oauth = call.get('oauth')
-
-        calls[id] = Call(name, url, method, expect, headers, query_params, body, timeout, tests, oauth=oauth)
-    return calls
-
-
-def execute(calls):
-    for key,val in calls.items(): 
-        if val.tests is not None:
-            val.run_tests()
-        else:
-            val.execute()

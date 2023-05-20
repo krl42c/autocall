@@ -1,20 +1,76 @@
-import argparse
+from . import  validator, printer, constants
+from . import call as ac
 import yaml
-import call
+import requests
+from typing import List
 
-parser = argparse.ArgumentParser(
-                    prog = 'autocall',
-                    description = 'Automatize network calls with yaml files',
-                    )
+CONFIG_TIMEOUT = 300
 
-parser.add_argument('-f', nargs='?', help='Target YAML file', dest="config_file")
+def parse_headers(call):
+    return {key: value for key, value in call['headers'].items()}
 
-args = parser.parse_args()
-print(args)
+exceptions = (
+    validator.MalformedUrlException,
+    validator.UnrecognizedFieldException,
+    validator.BadHTTPMethod,
+    validator.ExceptedFieldMissing,
+    validator.InvalidStatusCode
+)
 
-config_file = args.config_file if args.config_file else None
+def create_calls(config_file) -> List[ac.Call]:
+    with open(config_file, encoding='utf-8') as file:
+        config = yaml.load(file, Loader=yaml.UnsafeLoader)
+    calls = {}
+    for c in config['calls']:
+        call = c['call']
 
-call_list : call.Call = call.create_calls(config_file)
+        name = call['id'] if 'id' in call else 'NO ID'
 
-for c in call_list:
-    c.run_tests()
+        # Try to validate current call, if validator throws an exception skip it and continue
+        try:
+            validator.validate_call(call)
+        except exceptions as exception:
+            printer.print_err(name, exception)
+            continue
+
+        url = call.get('url')
+        expect = call.get('expect')
+        method = call.get('method')
+
+        query_params = call.get('params')
+        body = call.get('body')
+        headers = call.get('headers')
+        tests = call.get('tests')
+        timeout = call.get('timeout', constants.DEFAULT_TIMEOUT)
+        oauth = call.get('oauth')
+        dynamic = call.get('dynamic')
+
+        calls[name] = ac.Call(name, url, method, expect, headers, query_params, body, timeout, tests, oauth=oauth, dynamic=dynamic)
+        if dynamic:
+            parent_id = ddg_find_parent(calls[name])
+            if parent_id:
+                ddg_construct_body(calls[name], calls[parent_id])
+            else:
+                continue
+
+    return calls
+
+def ddg_construct_body(child_call : ac.Call, parent_call : ac.Call):
+    print("wip")
+
+# @REFACTOR: Hacky mess
+def ddg_find_parent(child_call : ac.Call):
+    for value in child_call.body.split(" "):
+        if value.find("@") != -1:
+            ddg = value[value.index("@"):]
+            vals = ddg.split(".")
+            parent = vals[0][1:] # remove @
+            return parent
+    return None
+
+def execute(calls):
+    for key,val in calls.items(): 
+        if val.tests is not None:
+            val.run_tests()
+        else:
+            val.execute(save_report = True, report_target = "reports/report.txt")

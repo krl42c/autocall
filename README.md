@@ -7,9 +7,9 @@ Automatize network calls using yaml files for testing.
 ## Usage:
 
 ```python
-from autocall import call
-call_set = call.create_calls('set.yaml')
-call.execute(call_set)
+from autocall import autocall
+call_set = autocall.create_calls('set.yaml')
+autocall.execute(call_set)
 ``````
 
 Example yaml config file:
