@@ -87,18 +87,3 @@ class Call:
         for body in self.tests:
             self.body = body['body']
             self.execute()
-
-    # @TODO: Remove, start using reporter.py
-    def save_report(self, target_dir):
-        assert self.result
-        assert self.result_body
-        assert os.path.isdir(target_dir)
-
-        current_time = datetime.now().strftime("%H:%M:%S")
-        current_date = datetime.today().strftime('%Y-%m-%d')
-
-        file_name = f"autocall_log{current_date}.txt"
-
-        with open(target_dir + file_name, 'a+', encoding='utf-8') as file:
-            file.write(current_time + ': ' + self.url + ' - ' + str(self.result) + '\n')
-            file.write(str(self.result_body) + '\n\n\n')
