@@ -1,5 +1,5 @@
 from datetime import datetime
-from autocall import call as ac
+from . import call as ac
 
 def current_time() -> str:
     return datetime.now().strftime("%H:%M:%S")
@@ -15,15 +15,15 @@ def make_entry(call_rep : ac.Call,
 
     if log_result_code:
         assert call_rep.result
-        entry_parts.append(call_rep.result)
+        entry_parts.append(str(call_rep.result))
     
     if log_response:
         assert call_rep.result_body
-        entry_parts.append(call_rep.result_body)
-   
+        entry_parts.append(str(call_rep.result_body))
+        
     if log_request_body:
         assert call_rep.body
-        entry_parts.append(call_rep.body)
+        entry_parts.append(str(call_rep.body))
 
     entry = ' '.join(entry_parts)
     return entry

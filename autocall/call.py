@@ -65,7 +65,6 @@ class Call:
                 else:
                     self.headers.update({'Authorization' : "Bearer " + (oauth_res.json())})
 
-            print(self.headers)
             res = requests_map[self.method](self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
 
             self.result = res.status_code
@@ -89,7 +88,7 @@ class Call:
             self.body = body['body']
             self.execute()
 
-    # @TODO: Just a placeholder for now, improve it
+    # @TODO: Remove, start using reporter.py
     def save_report(self, target_dir):
         assert self.result
         assert self.result_body

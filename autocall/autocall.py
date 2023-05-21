@@ -1,4 +1,4 @@
-from . import  validator, printer, constants
+from . import  validator, printer, constants, reporter
 from . import call as ac
 import yaml
 import requests
@@ -68,9 +68,12 @@ def ddg_find_parent(child_call : ac.Call):
             return parent
     return None
 
-def execute(calls):
+def execute(calls, save_report = False):
     for key,val in calls.items(): 
         if val.tests is not None:
             val.run_tests()
         else:
-            val.execute(save_report = True, report_target = "reports/report.txt")
+            val.execute()
+            if save_report:
+                entry = reporter.make_entry(val, True, True, False)
+                reporter.write_entry('reports/rep.txt', entry)
