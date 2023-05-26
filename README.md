@@ -69,3 +69,5 @@ Run the run_tests.sh script, an Uvicorn server located in tests/test_server will
 $ pip3 install -r requirements.txt
 $ ./run_tests.sh
 ```
+
+For debug logs set DEBUG=1 before running.
