@@ -2,6 +2,8 @@ from . import  validator, printer, constants, reporter
 from . import call as ac
 import yaml
 import requests
+import logging
+import os
 from typing import List
 
 CONFIG_TIMEOUT = 300
@@ -31,6 +33,7 @@ def create_calls(config_file) -> List[ac.Call]:
             validator.validate_call(call)
         except exceptions as exception:
             printer.print_err(name, exception)
+            logging.debug(f"Error validating call set {call}")
             continue
 
         url = call.get('url')
