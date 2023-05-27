@@ -4,3 +4,5 @@ validators
 fastapi
 uvicorn
 colorama
+jinja2
+pytest
