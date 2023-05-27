@@ -14,7 +14,6 @@ def test_multiple_calls(requests_mock):
     calls = autocall.create_calls(MULTIPLE_CALLS)
 
     init_mocks(requests_mock, calls)
-    
     try:
         [val.execute() for key,val in calls.items()]
     except requests.RequestException:
@@ -27,18 +26,6 @@ def test_unrecognized_field(requests_mock):
     calls = autocall.create_calls(MULTIPLE_CALLS)
 
     init_mocks(requests_mock, calls)
-
-    for call in calls.values():
-        if call.method == constants.M_GET:
-            #requests_mock.get(url = call.url, headers=call.headers, params=call.params, json=call.body, timeout=call.timeout)
-            requests_mock.get(call.url)
-        if call.method == constants.M_POST:
-            requests_mock.post(call.url)
-        if call.method == constants.M_PUT:
-            requests_mock.put(call.url)
-        if call.method == constants.M_DELETE:
-            requests_mock.delete(call.url)
-
     with pytest.raises(validator.UnrecognizedFieldException):
         for c in load_config_file(UNEXCEPTED)['calls']:
             current_call = c['call']
@@ -49,7 +36,6 @@ def test_excepted_field_missing(requests_mock):
     calls = autocall.create_calls(MULTIPLE_CALLS)
 
     init_mocks(requests_mock, calls)
-
     with pytest.raises(validator.ExceptedFieldMissing):
         for c in load_config_file(UNEXCEPTED)['calls']:
             current_call = c['call']
