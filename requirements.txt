@@ -6,3 +6,4 @@ uvicorn
 colorama
 jinja2
 pytest
+requests_mock
