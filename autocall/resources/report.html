@@ -1,0 +1,7 @@
+<div>
+    <ul id="call_report">
+    {% for call in calls %}
+        <li>{{call.url}} {{call.status}} {{call.result}}</li>
+    {% endfor %}
+    </ul>
+</div>
