@@ -1,7 +1,8 @@
 <div>
+    {{id}}
     <ul id="call_report">
     {% for call in calls %}
-        <li>{{call.url}} {{call.status}} {{call.result}}</li>
+        <li>{{call.url}} {{call.result}} {{call.expect}}</li>
     {% endfor %}
     </ul>
 </div>

@@ -1,4 +1,7 @@
+import os
 from datetime import datetime
+from jinja2 import Environment, FileSystemLoader
+from typing import List
 from . import call as ac
 
 def current_time() -> str:
@@ -44,3 +47,16 @@ def write_entry(target_file : str, entry : str):
             file.write(entry)
     except FileNotFoundError as file_not_found:
         raise file_not_found
+
+def create_html_report(calls : List[ac.Call], target_file : str):
+    path = os.path.dirname(os.path.abspath(__file__))
+
+    file_loader = FileSystemLoader(path + '/templates')
+    env = Environment(loader=file_loader)
+
+    template = env.get_template('report.html')
+    output = template.render(calls=calls)
+
+    with open(target_file, 'w') as target:
+        target.write(output)
+

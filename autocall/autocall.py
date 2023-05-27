@@ -19,7 +19,7 @@ exceptions = (
     validator.InvalidStatusCode
 )
 
-def create_calls(config_file) -> List[ac.Call]:
+def create_calls(config_file) -> dict:
     with open(config_file, encoding='utf-8') as file:
         config = yaml.load(file, Loader=yaml.UnsafeLoader)
     calls = {}
