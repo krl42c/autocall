@@ -37,7 +37,7 @@ def create_calls(config_file) -> dict:
             continue
 
         url = call.get('url')
-        expect = call.get('expect')
+        expect = call.get('expect', 200)
         method = call.get('method')
 
         query_params = call.get('params')
