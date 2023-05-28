@@ -42,6 +42,8 @@ class Call:
 
         self.result = None
         self.result_body = None
+        self.elapsed = None
+        self.success = False
 
     def execute(self, 
                 print_to_console = True,
@@ -73,21 +75,24 @@ class Call:
 
             self.result = res.status_code
             self.result_body = res.json()
+            self.elapsed = res.elapsed
 
             if print_to_console:
                 printer.print_call(self.expect, self.url, self.call_id, res)
             if print_response:
                 print(res.json(), '\n')
+            self.success = True
 
         except json.JSONDecodeError as json_decode_error:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
             logging.debug(f"[{self.url}][ERROR]: error executing request, problem with json body: {json_decode_error.msg}")
+
         try:
             if self.body:
                 self.body = json.loads(self.body)
         except requests.RequestException as req_exception:
             print(f'{Fore.RED}Error opening connection with host {self.url}{Style.RESET_ALL}')
-            logging.debug(f"[{self.url}][ERROR]: error executing request: {req_exception.msg}")
+            logging.debug(f"[{self.url}][ERROR]: error executing request: {req_exception}")
             print(req_exception)
 
 
