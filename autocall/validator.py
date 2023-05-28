@@ -27,7 +27,7 @@ def validate_call(call):
     if not validators.url(url):
         raise MalformedUrlException()
 
-    expect = call.get('expect')
+    expect = call.get('expect', 200)
     if expect:
         valid_status = False
         for s in HTTPStatus:
