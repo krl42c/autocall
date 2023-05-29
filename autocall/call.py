@@ -6,7 +6,7 @@ import os.path
 import logging
 from datetime import datetime
 from colorama import Fore, Style
-from . import constants, validator, printer 
+from autocall import constants, validator, printer 
 
 requests_map = {
     constants.M_GET : requests.get,
@@ -27,7 +27,8 @@ class Call:
                  timeout : int = constants.DEFAULT_TIMEOUT,
                  tests : str = None,
                  oauth : dict = None,
-                 dynamic : bool = False):
+                 dynamic : bool = False,
+                 ):
         self.call_id = call_id
         self.url = url
         self.method = method

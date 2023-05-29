@@ -4,6 +4,7 @@ import yaml
 import requests
 import logging
 import os
+from random import randrange
 from typing import List
 
 CONFIG_TIMEOUT = 300
@@ -24,10 +25,9 @@ def create_calls(config_file) -> dict:
         config = yaml.load(file, Loader=yaml.UnsafeLoader)
     calls = {}
     for c in config['calls']:
-        call = c['call']
+        call : dict = c['call']
 
-        name = call['id'] if 'id' in call else 'NO ID'
-
+        name = call.get('id', str(randrange(0,10000000))) # bug prone? 
         # Try to validate current call, if validator throws an exception skip it and continue
         try:
             validator.validate_call(call)
@@ -72,7 +72,7 @@ def ddg_find_parent(child_call : ac.Call):
     return None
 
 def execute(calls, save_report = False):
-    for key,val in calls.items(): 
+    for _,val in calls.items(): 
         if val.tests is not None:
             val.run_tests()
         else:

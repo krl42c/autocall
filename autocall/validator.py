@@ -1,7 +1,7 @@
 import json
 import validators
+from autocall import constants
 from http import HTTPStatus
-from . import constants
 
 valid_top_level_keys = (
     'id', 
@@ -78,4 +78,3 @@ class ExceptedFieldMissing(Exception):
 class InvalidStatusCode(Exception):
     def __init__(self, code):
         super().__init__(f'Invalid status code {code}')
-

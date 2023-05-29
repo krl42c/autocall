@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from typing import List
-from . import call as ac
+from autocall import call as ac
 
 def current_time() -> str:
     return datetime.now().strftime("%H:%M:%S")
@@ -75,5 +75,4 @@ def response_time_average(call : ac.Call, runs_no = 1):
         call.execute()
         if call.elapsed:
             times.append(call.elapsed.total_seconds())
-
     return sum(times) / runs_no
