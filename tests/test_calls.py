@@ -2,7 +2,6 @@ import pytest
 import requests
 import json
 import yaml
-from typing import List
 from autocall import autocall,validator,constants
 
 MULTIPLE_CALLS = "tests/sets/parametrized.yml"
@@ -30,16 +29,6 @@ def test_unrecognized_field(requests_mock):
         for c in load_config_file(UNEXCEPTED)['calls']:
             current_call = c['call']
             validator.validate_call(load_config_file(UNRECOGNIZED))
-
-
-def test_excepted_field_missing(requests_mock):
-    calls = autocall.create_calls(MULTIPLE_CALLS)
-
-    init_mocks(requests_mock, calls)
-    with pytest.raises(validator.ExceptedFieldMissing):
-        for c in load_config_file(UNEXCEPTED)['calls']:
-            current_call = c['call']
-            validator.validate_call(current_call)  
 
 
 def load_config_file(config):

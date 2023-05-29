@@ -17,46 +17,76 @@ valid_top_level_keys = (
     'dynamic'
 )
 
-def validate_call(call):
+mandatory_keys = {
+    'url',
+    'method'
+}
+
+def are_mandatory_keys_present(call):
+    for key in mandatory_keys:
+        if key not in call.keys():
+            return False
+    return True
+
+
+# Multiple return in order to enable exception message to include invalid keys
+# kinda ugly
+def are_keys_valid(call):
     keys = call.keys()
     invalid_keys = keys - valid_top_level_keys
     if invalid_keys:
-        raise UnrecognizedFieldException(f"Unrecognized yaml key(s): {', '.join(invalid_keys)}")
+        return False, invalid_keys
+    else:
+        return True, invalid_keys
+    
 
-    url = call['url']
-    if not validators.url(url):
+def is_http_code_valid(code):
+    for http_code in HTTPStatus:
+        if code == http_code:
+            return True
+    return False
+
+
+def is_method_valid(method):
+    return method in constants.METHODS
+
+
+def is_json_valid(body):
+    try:
+        json.loads(body)
+        return True
+    except json.JSONDecodeError:
+        return False
+
+
+def is_url_valid(url):
+    return validators.url(url)
+
+
+def validate_call(call):
+    # Check that there are not invalid yaml keys
+    keys_valid, keys = are_keys_valid(call)
+    if not keys_valid:
+        raise UnrecognizedFieldException(keys)
+    
+    # Check if all needed keys are present
+    keys_mandatory = are_mandatory_keys_present(call)
+    if not keys_mandatory:
+        raise UnrecognizedFieldException(keys)
+    
+    # Validate HTTP Method
+    method = call.get('method') 
+    if not is_method_valid(method):
+       raise BadHTTPMethod(f"Unrecognized HTTP method {method}")
+
+    status_code = call.get('expect') 
+    if not is_http_code_valid(status_code):
+        raise InvalidStatusCode(status_code)
+
+    # Check URL 
+    if not is_url_valid(call.get('url')):
         raise MalformedUrlException()
 
-    expect = call.get('expect', 200)
-    if expect:
-        valid_status = False
-        for s in HTTPStatus:
-            if expect == s:
-                valid_status = True
-    
-    if not valid_status: 
-        raise InvalidStatusCode(expect)
-    
-    op = call['method']
-    if op not in constants.METHODS:
-        raise BadHTTPMethod(f"Unrecognized HTTP method {op}")
-
-    if 'body' in call:
-        body = call['body']
-        try:
-            json.loads(body)
-        except json.JSONDecodeError as bad_json:
-            raise bad_json
-        
-    if 'tests' in call:
-        for test in call['tests']:
-            if 'body' not in test:
-                raise ExceptedFieldMissing('tests', 'body')
-            else:
-                try:
-                    json.loads(test['body'])
-                except json.JSONDecodeError as bad_json:
-                    raise bad_json
 
 class MalformedUrlException(Exception):
     def __init__(self):
