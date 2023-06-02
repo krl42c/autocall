@@ -6,7 +6,8 @@ import os.path
 import logging
 from datetime import datetime
 from colorama import Fore, Style
-from autocall import constants, validator, printer 
+from autocall import constants, printer 
+
 
 requests_map = {
     constants.M_GET : requests.get,
@@ -14,6 +15,7 @@ requests_map = {
     constants.M_PUT : requests.put,
     constants.M_DELETE : requests.delete
 }
+
 
 class Call:
     def __init__(self,
