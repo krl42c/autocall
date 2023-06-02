@@ -22,6 +22,11 @@ mandatory_keys = {
     'method'
 }
 
+keys_with_children = {
+    'headers',
+    'oauth',
+}
+
 def are_mandatory_keys_present(call):
     for key in mandatory_keys:
         if key not in call.keys():
@@ -63,7 +68,11 @@ def is_url_valid(url):
     return validators.url(url)
 
 
-def validate_call(call):
+def are_headers_valid(headers):
+    return isinstance(headers, dict)
+
+
+def validate_call(call : dict):
     # Check that there are not invalid yaml keys
     keys_valid, keys = are_keys_valid(call)
     if not keys_valid:
@@ -79,32 +88,41 @@ def validate_call(call):
     if not is_method_valid(method):
        raise BadHTTPMethod(f"Unrecognized HTTP method {method}")
 
-    status_code = call.get('expect') 
+    status_code = call.get('expect', 200) 
     if not is_http_code_valid(status_code):
         raise InvalidStatusCode(status_code)
 
     # Check URL 
     if not is_url_valid(call.get('url')):
         raise MalformedUrlException()
+    
+    headers = call.get('headers')
+    if headers and not are_headers_valid(headers):
+        raise Exception('Headers do not contain any values')
 
 
 class MalformedUrlException(Exception):
     def __init__(self):
         super().__init__("Malformed URL")
 
+
 class UnrecognizedFieldException(Exception):
     def __init__(self, message):
         super().__init__(message)
 
+
 class BadHTTPMethod(Exception):
     def __init__(self, message):
         super().__init__(message)
+
 
 class ExceptedFieldMissing(Exception):
     def __init__(self, parent, excepted):
         message = f"Unexcepted field after {parent}, excepted: {excepted}"
         super().__init__(message)
 
+
 class InvalidStatusCode(Exception):
     def __init__(self, code):
         super().__init__(f'Invalid status code {code}')
+
