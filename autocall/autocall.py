@@ -31,7 +31,7 @@ def create_calls(config_file) -> dict:
             validator.validate_call(call)
         except exceptions as exception:
             printer.print_err(name, exception)
-            logging.debug(f"Error validating call set {call}")
+            logging.debug("Error validating call set %s", call)
             continue
 
         url = call.get('url')

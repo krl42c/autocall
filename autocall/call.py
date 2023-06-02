@@ -53,20 +53,20 @@ class Call:
                 print_response = False,
                 ):
         res : requests.Response = requests.Response()
-        logging.debug(f"[{self.url}] Running request")
+        logging.debug("[%s] Running request", self.url)
         try:
             if self.body:
                 self.body = json.loads(self.body)
 
             if self.oauth:
-                logging.debug(f"[{self.url}][OAUTH] Running oauth token request")
+                logging.debug("[%s][OAUTH] Running oauth token request", self.url)
                 oauth_token_url = self.oauth.get('token-url')
                 oauth_query_params = {
                     'client_id' : self.oauth.get('client_id'),
                     'client_secret' : self.oauth.get('client_secret')
                 }
                 oauth_res = requests.post(oauth_token_url, params=oauth_query_params, timeout=constants.DEFAULT_TIMEOUT)
-                logging.debug(f"[{self.url}][OAUTH] Token: {oauth_res.json()}")
+                logging.debug("[%s][OAUTH] Token: {%s}", self.url, oauth_res.json())
                 assert oauth_res.json()
 
                 if self.headers is None:
@@ -88,14 +88,14 @@ class Call:
 
         except json.JSONDecodeError as json_decode_error:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
-            logging.debug(f"[{self.url}][ERROR]: error executing request, problem with json body: {json_decode_error.msg}")
+            logging.debug("[{%s}][ERROR]: error executing request, problem with json body: {%s}", self.url, json_decode_error.msg)
 
         try:
             if self.body:
                 self.body = json.loads(self.body)
         except requests.RequestException as req_exception:
             print(f'{Fore.RED}Error opening connection with host {self.url}{Style.RESET_ALL}')
-            logging.debug(f"[{self.url}][ERROR]: error executing request: {req_exception}")
+            logging.debug("[%s][ERROR]: error executing request: %s", self.url, req_exception)
             print(req_exception)
 
 
