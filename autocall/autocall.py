@@ -1,4 +1,5 @@
 import yaml
+import os
 import logging
 from random import randrange
 from typing import List
@@ -32,6 +33,8 @@ def create_calls(config_file) -> dict:
         except exceptions as exception:
             printer.print_err(name, exception)
             logging.debug("Error validating call set %s", call)
+            if os.environ.get('TEST') == '1':
+                raise exception 
             continue
 
         url = call.get('url')

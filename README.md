@@ -63,11 +63,17 @@ calls:
 
 ## Running tests
 
-Run the run_tests.sh script, an Uvicorn server located in tests/test_server will launch and the pytest suite will be ran against it.
+Regular pytest tests:
 
 ```cli
-$ pip3 install -r requirements.txt
-$ ./run_tests.sh
+$ TESTS=1 python3 -m pytest tests
 ```
+
+For testing against a real server there's an Uvicorn server located in tests/test_server and a run.py file in the root directory.
+
+```cli
+$ ./run.py /path-to-yaml-file 
+```
+
 
 For debug logs set DEBUG=1 before running.
