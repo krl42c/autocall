@@ -29,10 +29,7 @@ keys_with_children = {
 
 
 def are_mandatory_keys_present(call):
-    for key in mandatory_keys:
-        if key not in call.keys():
-            return False
-    return True
+    return all(key in call.keys() for key in mandatory_keys)
 
 # Multiple return in order to enable exception message to include invalid keys
 # kinda ugly
