@@ -27,12 +27,12 @@ keys_with_children = {
     'oauth',
 }
 
+
 def are_mandatory_keys_present(call):
     for key in mandatory_keys:
         if key not in call.keys():
             return False
     return True
-
 
 # Multiple return in order to enable exception message to include invalid keys
 # kinda ugly
@@ -81,7 +81,7 @@ def validate_call(call : dict):
     # Check if all needed keys are present
     keys_mandatory = are_mandatory_keys_present(call)
     if not keys_mandatory:
-        raise UnrecognizedFieldException(keys)
+        raise MissingFields(keys)
     
     # Validate HTTP Method
     method = call.get('method') 
@@ -95,11 +95,24 @@ def validate_call(call : dict):
     # Check URL 
     if not is_url_valid(call.get('url')):
         raise MalformedUrlException()
-    
     headers = call.get('headers')
     if headers and not are_headers_valid(headers):
         raise Exception('Headers do not contain any values')
+    
+    # validation of nodes that required specific child nodes
+    def check_oauth(node : dict):
+        return True if node.get('token-url') and node.get('client_id') and node.get('client_secret') else False
+    def check_tests(node : dict):
+        return True if node.get('body') and isinstance(node.get('body'), dict) else False
+    def check_headers(node : dict):
+        return True if node.items() > 1 else False
 
+    if call.get('oauth'):
+        if not check_oauth(call.get('oauth')):
+            raise ExceptedFieldMissing('Missing fields for OAuth, excepted: ', 'client_id, client_secret, token-url')
+    if call.get('tests'):
+        if not check_tests(call.get('tests')):
+            raise ExceptedFieldMissing('Missing fields for tests, excepted: ', 'call body')
 
 class MalformedUrlException(Exception):
     def __init__(self):
@@ -126,3 +139,7 @@ class InvalidStatusCode(Exception):
     def __init__(self, code):
         super().__init__(f'Invalid status code {code}')
 
+
+class MissingFields(Exception):
+    def __init__(self, keys):
+        super().__init__(keys)
