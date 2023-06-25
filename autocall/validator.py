@@ -28,45 +28,28 @@ keys_with_children = {
 }
 
 
+# Unitary validation functions`
+def are_keys_valid(call):
+    invalid_keys = call.keys() - valid_top_level_keys
+    return (False, invalid_keys) if invalid_keys else (True, invalid_keys)
 def are_mandatory_keys_present(call):
     return all(key in call.keys() for key in mandatory_keys)
-
-# Multiple return in order to enable exception message to include invalid keys
-# kinda ugly
-def are_keys_valid(call):
-    keys = call.keys()
-    invalid_keys = keys - valid_top_level_keys
-    if invalid_keys:
-        return False, invalid_keys
-    else:
-        return True, invalid_keys
-    
-
 def is_http_code_valid(code):
-    for http_code in HTTPStatus:
-        if code == http_code:
-            return True
-    return False
-
-
+    return True if code in HTTPStatus else False
 def is_method_valid(method):
     return method in constants.METHODS
-
-
 def is_json_valid(body):
-    try:
-        json.loads(body)
-        return True
-    except json.JSONDecodeError:
-        return False
-
-
+    return True if json.loads(body) else False
 def is_url_valid(url):
     return validators.url(url)
-
-
 def are_headers_valid(headers):
     return isinstance(headers, dict)
+def check_oauth(node : dict):
+    return True if node.get('token-url') and node.get('client_id') and node.get('client_secret') else False
+def check_tests(node : dict):
+    return True if node.get('body') and isinstance(node.get('body'), dict) else False
+def check_headers(node : dict):
+    return True if node.items() > 1 else False
 
 
 def validate_call(call : dict):
