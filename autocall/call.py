@@ -56,7 +56,10 @@ class Call:
         logging.debug("[%s] Running request", self.url)
         try:
             if self.body:
-                self.body = json.loads(self.body)
+                if isinstance(self.body, dict): 
+                    self.body = json.dumps(self.body)
+                else:
+                    self.body = json.loads(self.body)
 
             if self.oauth:
                 logging.debug("[%s][OAUTH] Running oauth token request", self.url)
