@@ -12,6 +12,9 @@ on:
 permissions:
   contents: read
 
+env:
+  TEST: 1
+
 jobs:
   build:
 
@@ -38,4 +41,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest tests
+        TEST=1 pytest tests
