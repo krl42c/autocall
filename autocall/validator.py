@@ -29,30 +29,29 @@ keys_with_children = {
 
 
 # Unitary validation functions`
-def are_keys_valid(call):
-    invalid_keys = call.keys() - valid_top_level_keys
-    return (False, invalid_keys) if invalid_keys else (True, invalid_keys)
-def are_mandatory_keys_present(call):
-    return all(key in call.keys() for key in mandatory_keys)
-def is_http_code_valid(code):
-    return True if code in HTTPStatus else False
-def is_method_valid(method):
-    return method in constants.METHODS
-def is_json_valid(body):
-    return True if json.loads(body) else False
-def is_url_valid(url):
-    return validators.url(url)
-def are_headers_valid(headers):
-    return isinstance(headers, dict)
-def check_oauth(node : dict):
-    return True if node.get('token-url') and node.get('client_id') and node.get('client_secret') else False
-def check_tests(node : dict):
-    return True if node.get('body') and isinstance(node.get('body'), dict) else False
-def check_headers(node : dict):
-    return True if node.items() > 1 else False
-
 
 def validate_call(call : dict):
+    def are_keys_valid(call):
+        invalid_keys = call.keys() - valid_top_level_keys
+        return (False, invalid_keys) if invalid_keys else (True, invalid_keys)
+    def are_mandatory_keys_present(call):
+        return all(key in call.keys() for key in mandatory_keys)
+    def are_headers_valid(headers):
+        return isinstance(headers, dict)
+    def are_tests_valid(node : dict): 
+        return all(x.get('body') for x in node)
+    def is_http_code_valid(code):
+        return True if code in list(HTTPStatus) else False
+    def is_method_valid(method):
+        return method in constants.METHODS
+    def is_json_valid(body):
+        return True if json.loads(body) else False
+    def is_url_valid(url):
+        return validators.url(url)
+    def is_oauth_valid(node : dict):
+        return True if node.get('token-url') and node.get('client_id') and node.get('client_secret') else False
+
+
     # Check that there are not invalid yaml keys
     keys_valid, keys = are_keys_valid(call)
     if not keys_valid:
@@ -79,19 +78,11 @@ def validate_call(call : dict):
     if headers and not are_headers_valid(headers):
         raise Exception('Headers do not contain any values')
     
-    # validation of nodes that required specific child nodes
-    def check_oauth(node : dict):
-        return True if node.get('token-url') and node.get('client_id') and node.get('client_secret') else False
-    def check_tests(node : dict):
-        return True if node.get('body') and isinstance(node.get('body'), dict) else False
-    def check_headers(node : dict):
-        return True if node.items() > 1 else False
-
     if call.get('oauth'):
-        if not check_oauth(call.get('oauth')):
+        if not is_oauth_valid(call.get('oauth')):
             raise ExceptedFieldMissing('Missing fields for OAuth, excepted: ', 'client_id, client_secret, token-url')
     if call.get('tests'):
-        if not check_tests(call.get('tests')):
+        if not are_tests_valid(call.get('tests')):
             raise ExceptedFieldMissing('Missing fields for tests, excepted: ', 'call body')
 
 class MalformedUrlException(Exception):
