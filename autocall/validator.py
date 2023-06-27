@@ -38,14 +38,14 @@ def validate_call(call : dict):
         return all(key in call.keys() for key in mandatory_keys)
     def are_headers_valid(headers):
         return isinstance(headers, dict)
+    def is_json_valid(body):
+        return True if json.loads(body) else False
     def are_tests_valid(node : dict): 
-        return all(x.get('body') for x in node)
+        return all(x.get('body') and is_json_valid(x.get('body')) for x in node)
     def is_http_code_valid(code):
         return True if code in list(HTTPStatus) else False
     def is_method_valid(method):
         return method in constants.METHODS
-    def is_json_valid(body):
-        return True if json.loads(body) else False
     def is_url_valid(url):
         return validators.url(url)
     def is_oauth_valid(node : dict):
