@@ -1,0 +1,18 @@
+global-url: http://localhost:8000
+global-timeout: 300
+
+calls:
+  - call:
+      id : "All fields / No oauth"
+      url : http://localhost:8000
+      expect : 200
+      headers: 
+        userid : '2222'
+      method : GET
+      timeout: 500
+      params:
+        name : 'Test_param'
+      body:
+        {
+          name : test
+        }

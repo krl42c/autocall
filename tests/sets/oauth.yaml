@@ -11,7 +11,6 @@ calls:
       url : http://localhost:8000
       expect : 200
       headers: 
-        userid : '2222'
         authorization : 'Bearer'
       method : GET
       timeout: 500

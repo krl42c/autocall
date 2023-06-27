@@ -3,20 +3,12 @@ global-timeout: 300
 
 calls:
   - call:
+      oauth:
+        token-url: http://localhost:8000/token
       id : "Base url"
       url : http://localhost:8000
       expect : 200
       headers: 
-        userid : '2222'
-        authorization : 'Bearer'
-      method : GET
-      timeout: 500
-  - call:
-      id : "Not expected"
-      url : http://localhost:8000
-      expect : 400
-      headers: 
-        userid : '2222'
         authorization : 'Bearer'
       method : GET
       timeout: 500

@@ -2,7 +2,7 @@ import pytest
 import os
 from autocall import autocall, reporter, call
 
-SET = "tests/sets/general.yml"
+SET = "tests/sets/ok_all_fields.yaml"
 
 def test_make_report():
     target_file = 'test.html'

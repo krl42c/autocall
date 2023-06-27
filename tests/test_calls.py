@@ -1,34 +1,53 @@
 import pytest
-import requests
-import json
 import yaml
-from autocall import autocall,validator,constants
+from autocall import autocall, validator
 
-MULTIPLE_CALLS = "tests/sets/parametrized.yml"
-ALL_METHODS = "tests/sets/general.yml"
-UNRECOGNIZED = "tests/sets/unrec.yml"
-UNEXCEPTED = "tests/sets/unexcepted.yml"
+ALL_FIELDS_NO_AUTH = "tests/sets/ok_all_fields_no_auth.yaml"
+ALL_FIELDS =  "tests/sets/ok_all_fields.yaml"
 
-def test_multiple_calls(requests_mock):
-    calls = autocall.create_calls(MULTIPLE_CALLS)
 
-    init_mocks(requests_mock, calls)
+UNRECOGNIZED = "tests/sets/ko_unrecognized.yaml"
+UNEXCEPTED = "tests/sets/ko_unexcepted.yaml"
+
+def test_all_fields_no_auth(requests_mock):
+    calls = autocall.create_calls(ALL_FIELDS_NO_AUTH)
+    mock_all(requests_mock, calls)
+
     try:
-        [val.execute() for key,val in calls.items()]
-    except requests.RequestException:
-        pytest.fail("Request failed")
-    except json.JSONDecodeError:
-        pytest.fail("JSON decode failed")
+        [val.execute() for _, val in calls.items()]
+    except Exception:
+        pytest.fail("Test failed")
 
 
-def test_unrecognized_field(requests_mock):
-    calls = autocall.create_calls(MULTIPLE_CALLS)
+def test_all_fields(requests_mock):
+    calls = autocall.create_calls(ALL_FIELDS)
+    requests_mock.post('http://localhost:8000/token?client_id=23238IQsdj&client_secret=ksaudioaud12983u2') # Mock token URL
+    mock_all(requests_mock, calls)
 
-    init_mocks(requests_mock, calls)
+    try:
+        [val.execute() for _, val in calls.items()]
+    except Exception:
+        pytest.fail("Test failed")
+
+
+
+TESTS =  "tests/sets/ok_tests.yaml"
+def test_call_tests(requests_mock):
+    calls = autocall.create_calls(TESTS)
+    mock_all(requests_mock, calls)
+    try:
+        [val.execute() for _, val in calls.items()]
+    except Exception:
+        pytest.fail("Test failed")
+
+
+# Exceptions
+def test_unrecognized(requests_mock):
     with pytest.raises(validator.UnrecognizedFieldException):
-        for c in load_config_file(UNEXCEPTED)['calls']:
-            current_call = c['call']
-            validator.validate_call(load_config_file(UNRECOGNIZED))
+        calls = autocall.create_calls(UNRECOGNIZED)
+def test_excepted_field_missing(requests_mock):
+    with pytest.raises(validator.ExceptedFieldMissing):
+        calls = autocall.create_calls(UNEXCEPTED)
 
 
 def load_config_file(config):
@@ -36,14 +55,10 @@ def load_config_file(config):
         return yaml.safe_load(file)
     
 
-def init_mocks(requests_mock, calls):
+def mock_all(requests_mock, calls):
     for call in calls.values():
-        if call.method == constants.M_GET:
-            requests_mock.get(call.url)
-        if call.method == constants.M_POST:
-            requests_mock.post(call.url)
-        if call.method == constants.M_PUT:
-            requests_mock.put(call.url)
-        if call.method == constants.M_DELETE:
-            requests_mock.delete(call.url)
+        requests_mock.get(call.url)
+        requests_mock.post(call.url)
+        requests_mock.put(call.url)
+        requests_mock.delete(call.url)
     
