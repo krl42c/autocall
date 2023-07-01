@@ -30,7 +30,6 @@ def test_all_fields(requests_mock):
         pytest.fail("Test failed")
 
 
-
 TESTS =  "tests/sets/ok_tests.yaml"
 def test_call_tests(requests_mock):
     calls = autocall.create_calls(TESTS)
