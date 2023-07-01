@@ -1,0 +1,14 @@
+global-url: http://localhost:8000
+global-timeout: 300
+
+calls:
+  - call:
+      oauth:
+        token-url: http://localhost:8000/token
+        client_id: 23238IQsdj
+        client_secret: ksaudioaud12983u2
+      id : test
+      url : http://localhost:8000
+      expect : 200
+      method : GET
+      timeout: 500
