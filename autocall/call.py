@@ -6,7 +6,7 @@ import os.path
 import logging
 from datetime import datetime
 from colorama import Fore, Style
-from autocall import constants, printer 
+from autocall import constants, printer
 
 
 requests_map = {
@@ -69,13 +69,11 @@ class Call:
                     'client_secret' : self.oauth.get('client_secret')
                 }
                 oauth_res = requests.post(oauth_token_url, params=oauth_query_params, timeout=constants.DEFAULT_TIMEOUT)
-                logging.debug("[%s][OAUTH] Token: {%s}", self.url, oauth_res.json())
-                assert oauth_res.json()
-
+                
                 if self.headers is None:
-                    self.headers = {'Authorization' : "Bearer" + oauth_res.json()}
+                    self.headers = {'Authorization' : "Bearer " + str(oauth_res.json())}
                 else:
-                    self.headers.update({'Authorization' : "Bearer " + (oauth_res.json())})
+                    self.headers.update({'Authorization' : "Bearer " + str((oauth_res.json()))})
 
             res = requests_map[self.method](self.url, headers=self.headers, params=self.query_params, json=self.body, timeout=self.timeout)
 
@@ -83,10 +81,12 @@ class Call:
             self.result_body = res.json()
             self.elapsed = res.elapsed
 
-            if print_to_console:
-                printer.print_call(self.expect, self.url, self.call_id, res)
-            if print_response:
-                print(res.json(), '\n')
+            #if print_to_console:
+            #    printer.print_call(self.expect, self.url, self.call_id, res)
+            #    pass
+            #if print_response:
+            #    print(res.json(), '\n')
+
             self.success = True
 
         except json.JSONDecodeError as json_decode_error:

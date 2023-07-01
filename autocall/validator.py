@@ -16,7 +16,7 @@ class CallValidator:
         'timeout',
         'params',
         'oauth',
-        'dynamic'
+        #'dynamic'
     )
     mandatory_keys = {
         'url',
