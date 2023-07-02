@@ -1,6 +1,7 @@
 import pytest
 import yaml
 from autocall import autocall, validator
+from autocall.autocall import SetHandler
 
 ALL_FIELDS_NO_AUTH = "tests/sets/ok_all_fields_no_auth.yaml"
 ALL_FIELDS =  "tests/sets/ok_all_fields.yaml"
@@ -10,7 +11,7 @@ UNRECOGNIZED = "tests/sets/ko_unrecognized.yaml"
 UNEXCEPTED = "tests/sets/ko_unexcepted.yaml"
 
 def test_all_fields_no_auth(requests_mock):
-    calls = autocall.create_calls(ALL_FIELDS_NO_AUTH)
+    calls = SetHandler.from_yaml(ALL_FIELDS_NO_AUTH)
     mock_all(requests_mock, calls)
 
     try:
@@ -20,7 +21,7 @@ def test_all_fields_no_auth(requests_mock):
 
 
 def test_all_fields(requests_mock):
-    calls = autocall.create_calls(ALL_FIELDS)
+    calls = SetHandler.from_yaml(ALL_FIELDS)
     requests_mock.post('http://localhost:8000/token?client_id=23238IQsdj&client_secret=ksaudioaud12983u2') # Mock token URL
     mock_all(requests_mock, calls)
 
@@ -32,7 +33,7 @@ def test_all_fields(requests_mock):
 
 TESTS =  "tests/sets/ok_tests.yaml"
 def test_call_tests(requests_mock):
-    calls = autocall.create_calls(TESTS)
+    calls = SetHandler.from_yaml(TESTS)
     mock_all(requests_mock, calls)
     try:
         [val.execute() for _, val in calls.items()]
@@ -43,10 +44,10 @@ def test_call_tests(requests_mock):
 # Exceptions
 def test_unrecognized(requests_mock):
     with pytest.raises(validator.UnrecognizedFieldException):
-        calls = autocall.create_calls(UNRECOGNIZED)
+        calls = SetHandler.from_yaml(UNRECOGNIZED)
 def test_excepted_field_missing(requests_mock):
     with pytest.raises(validator.ExceptedFieldMissing):
-        calls = autocall.create_calls(UNEXCEPTED)
+        calls = SetHandler.from_yaml(UNEXCEPTED)
 
 
 def load_config_file(config):

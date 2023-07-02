@@ -1,14 +1,14 @@
 import pytest
 import os
-from autocall import autocall, call
 from autocall.reporter import ReportHelper
+from autocall.autocall import SetHandler
 
 SET = "tests/sets/ok_all_fields.yaml"
 
 def test_make_report():
     target_file = 'test.html'
 
-    call_set = autocall.create_calls(SET)
+    call_set = SetHandler.from_yaml(SET)
     html_report = ReportHelper.create_html_report(call_set) 
 
     assert html_report

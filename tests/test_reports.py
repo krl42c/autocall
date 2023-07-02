@@ -1,11 +1,11 @@
 import pytest
 from autocall.call import Call
-from autocall.autocall import create_calls
+from autocall.autocall import SetHandler
 from autocall.reporter import EntryBuilder, ReportHelper, current_time
 
 
 def test_default_entry(requests_mock):
-    set = create_calls('tests/sets/ok_all_fields.yaml')
+    set = SetHandler.from_yaml('tests/sets/ok_all_fields.yaml')
 
     
     result_call : Call = set.get('All fields / No oauth')
