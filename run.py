@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import sys
-from autocall import autocall, reporter
+from autocall.autocall import SetHandler
 
 if __name__ == '__main__':
-    callset = autocall.create_calls(sys.argv[1])
-    autocall.execute(callset, save_report=True)
+    callset = SetHandler.from_yaml(sys.argv[1])
+    SetHandler.run_set(callset)
 
