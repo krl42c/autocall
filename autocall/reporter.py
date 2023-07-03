@@ -39,7 +39,7 @@ class EntryBuilder:
     # .. ok - Reject new user with wrong data: <400> <400>      htttp:localhost:980/myapp/create_user   13:44:00   200ms
     # .. err - Delete user: <200> <500>      htttp:localhost:980/myapp/delete_user   13:44:01   900ms
     @staticmethod
-    def default(call : ac.Call, runs_no : 1) -> str:
+    def default(call : ac.Call, runs_no : int = 1) -> str:
         result = 'ok' if call.result == call.expect else 'err'
         return EntryBuilder.format(result, call.call_id, call.result, call.expect, call.url, current_time(), runs_no, ReportHelper.response_time_average(call, runs_no))
 
