@@ -93,9 +93,6 @@ class Call:
             print(f'{Fore.RED}Error parsing request body for {self.url}{Style.RESET_ALL}')
             logging.debug("[{%s}][ERROR]: error executing request, problem with json body: {%s}", self.url, json_decode_error.msg)
 
-        try:
-            if self.body:
-                self.body = json.loads(self.body)
         except requests.RequestException as req_exception:
             print(f'{Fore.RED}Error opening connection with host {self.url}{Style.RESET_ALL}')
             logging.debug("[%s][ERROR]: error executing request: %s", self.url, req_exception)
