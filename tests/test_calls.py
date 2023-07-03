@@ -7,8 +7,8 @@ ALL_FIELDS_NO_AUTH = "tests/sets/ok_all_fields_no_auth.yaml"
 ALL_FIELDS =  "tests/sets/ok_all_fields.yaml"
 
 
-UNRECOGNIZED = "tests/sets/ko_unrecognized.yaml"
-UNEXCEPTED = "tests/sets/ko_unexcepted.yaml"
+UNRECOGNIZED = "tests/sets/exceptions/ko_unrecognized.yaml"
+UNEXCEPTED = "tests/sets/exceptions/ko_unexcepted.yaml"
 
 def test_all_fields_no_auth(requests_mock):
     calls = SetHandler.from_yaml(ALL_FIELDS_NO_AUTH)
@@ -41,13 +41,19 @@ def test_call_tests(requests_mock):
         pytest.fail("Test failed")
 
 
-# Exceptions
-def test_unrecognized(requests_mock):
+def test_validation_exceptions_are_raised(requests_mock):
     with pytest.raises(validator.UnrecognizedFieldException):
-        calls = SetHandler.from_yaml(UNRECOGNIZED)
-def test_excepted_field_missing(requests_mock):
+        SetHandler.from_yaml(UNRECOGNIZED)
     with pytest.raises(validator.ExceptedFieldMissing):
-        calls = SetHandler.from_yaml(UNEXCEPTED)
+        SetHandler.from_yaml(UNEXCEPTED)
+    with pytest.raises(validator.MissingFields):
+        SetHandler.from_yaml('tests/sets/exceptions/ko_missing.yaml')
+    with pytest.raises(validator.BadHTTPMethod):
+        SetHandler.from_yaml('tests/sets/exceptions/ko_badhttp.yaml')
+    with pytest.raises(validator.InvalidStatusCode):
+        SetHandler.from_yaml('tests/sets/exceptions/ko_invalidstatus.yaml')
+    with pytest.raises(validator.MalformedUrlException):
+        SetHandler.from_yaml('tests/sets/exceptions/ko_malformedurl.yaml')
 
 
 def load_config_file(config):

@@ -3,12 +3,9 @@ global-timeout: 300
 
 calls:
   - call:
-      id : "All fields / No oauth"
-      url : http://localhost:8000
+      id : "Base url"
       expect : 200
       headers: 
-        userid : '2222'
+        authorization : 'Bearer'
       method : GET
       timeout: 500
-      params:
-        name : 'Test_param'

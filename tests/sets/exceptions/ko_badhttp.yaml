@@ -1,0 +1,12 @@
+global-url: http://localhost:8000
+global-timeout: 300
+
+calls:
+  - call:
+      id : "Base url"
+      expect : 200
+      url : http://localhost:8000
+      headers: 
+        authorization : 'Bearer'
+      method : GETTTT
+      timeout: 500
