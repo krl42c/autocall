@@ -61,6 +61,8 @@ class SetHandler:
     def run_set(call_set : dict[str, Call]):
         for _, call in call_set.items():
             call.execute()
+            entry = EntryBuilder.default(call)
+            print(entry)
 
     @staticmethod
     def run_set_tests(call_set : dict[str, Call]):

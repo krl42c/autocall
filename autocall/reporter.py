@@ -1,8 +1,10 @@
 import os
 from datetime import datetime
+from colorama import Fore, Style
 from jinja2 import Environment, FileSystemLoader
 from typing import List
 from autocall import call as ac
+
 
 def current_time() -> str:
     return datetime.now().strftime("%H:%M:%S")
@@ -44,5 +46,10 @@ class EntryBuilder:
         return EntryBuilder.format(result, call.call_id, call.result, call.expect, call.url, current_time(), runs_no, ReportHelper.response_time_average(call, runs_no))
 
     @staticmethod
-    def format(result, id, call_result, expect, url, current_time, runs_no, average):
-        return f'.. {result} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
+    def format(result, id, call_result, expect, url, current_time, runs_no, average, cli_colors = True):
+        if not cli_colors:
+            return f'.. {result} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
+        
+        result_color = Fore.GREEN if result == 'ok' else Fore.RED
+        return f'..{result_color} {result} {Style.RESET_ALL} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
+
