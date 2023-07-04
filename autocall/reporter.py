@@ -21,7 +21,7 @@ class ReportHelper:
         return sum(times) / runs_no
     
     @staticmethod
-    def create_html_report(calls : List[ac.Call]):
+    def create_html_report(calls : dict[str, ac.Call]):
         path = os.path.dirname(os.path.abspath(__file__))
 
         # autocall/templates/report-blank.html
@@ -30,7 +30,7 @@ class ReportHelper:
         env = Environment(loader=file_loader)
 
         template = env.get_template('report-blank.html') 
-        output = template.render(calls=calls, water_css=True)
+        output = template.render(calls=calls.values(), water_css=True)
         return output
 
 
@@ -52,4 +52,3 @@ class EntryBuilder:
         
         result_color = Fore.GREEN if result == 'ok' else Fore.RED
         return f'..{result_color} {result} {Style.RESET_ALL} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
-
