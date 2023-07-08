@@ -7,10 +7,18 @@ Automatize network calls using yaml files for testing.
 ## Usage:
 
 ```python
-from autocall import autocall
-call_set = autocall.create_calls('set.yaml')
-autocall.execute(call_set)
-``````
+from autocall.autocall import SetHandler
+callset = SetHandler.from_yaml('path-to-file.yaml')
+SetHandler.run_set(callset)
+```
+
+Running with thread support enabled (runs faster on bigger sets):
+```cli
+$ THREADS=1 ./run.py /path-to-yaml
+```
+
+To enable debug prints, set env DEBUG=1, to skip reports while running, set NOOUT=1
+
 
 Example yaml config file:
 
@@ -66,7 +74,7 @@ calls:
 Regular pytest tests:
 
 ```cli
-$ TESTS=1 python3 -m pytest tests
+$ TEST=1 python3 -m pytest tests
 ```
 
 For testing against a real server there's an Uvicorn server located in tests/test_server and a run.py file in the root directory.
