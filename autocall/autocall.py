@@ -63,10 +63,10 @@ class SetHandler:
     @staticmethod
     def run_set(call_set : dict[str, Call], output : bool = True, html : bool = True):  # call.execute() for each call of the callset
         if os.environ.get('THREADS') == '1':
-            from concurrent.futures import ProcessPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor
 
             start_time = time.time()
-            pool = ProcessPoolExecutor(max_workers=10)
+            pool = ThreadPoolExecutor(max_workers=10)
             pool.map(Call.execute, call_set.values())
             end_time = time.time() - start_time
             if os.environ.get('NOOUT')  != '1':
