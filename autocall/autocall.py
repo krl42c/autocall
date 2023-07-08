@@ -4,7 +4,7 @@ import logging
 import time
 from random import randrange
 from typing import List
-from autocall import  validator, printer, constants
+from autocall import  validator, constants
 from autocall.call import Call
 from autocall.reporter import EntryBuilder, ReportHelper
 
@@ -33,7 +33,7 @@ class SetHandler:
             try:
                 validator.validate_call(call)
             except SetHandler.exception_map as exception:
-                printer.print_err(name, exception)
+                print(EntryBuilder.err(name, exception))
                 logging.debug("Error validating call set %s", call)
                 if os.environ.get('TEST') == '1':
                     raise exception 
@@ -63,12 +63,13 @@ class SetHandler:
     @staticmethod
     def run_set(call_set : dict[str, Call], output : bool = True, html : bool = True):  # call.execute() for each call of the callset
         if os.environ.get('THREADS') == '1':
-            from concurrent.futures import ThreadPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor, wait
 
             start_time = time.time()
             pool = ThreadPoolExecutor(max_workers=10)
             pool.map(Call.execute, call_set.values())
             end_time = time.time() - start_time
+
             if os.environ.get('NOOUT')  != '1':
                 [print(EntryBuilder.default(call)) for call in call_set.values()]
 

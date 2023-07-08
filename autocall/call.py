@@ -6,7 +6,7 @@ import os.path
 import logging
 from datetime import datetime
 from colorama import Fore, Style
-from autocall import constants, printer
+from autocall import constants
 
 
 requests_map = {
@@ -25,9 +25,9 @@ class Call:
                  expect : int,
                  headers : dict = None,
                  query_params : dict = None,
-                 body : str = None,
+                 body : dict = None,
                  timeout : int = constants.DEFAULT_TIMEOUT,
-                 tests : str = None,
+                 tests : dict = None,
                  oauth : dict = None,
                  dynamic : bool = False,
                  ):
@@ -56,10 +56,11 @@ class Call:
         logging.debug("[%s] Running request", self.url)
         try:
             if self.body:
-                if isinstance(self.body, dict): 
-                    self.body = json.dumps(self.body)
-                else:
-                    self.body = json.loads(self.body)
+                #if isinstance(self.body, dict): 
+                #   self.body = json.dumps(self.body)
+                #else:
+                #    self.body = json.loads(self.body)
+                self.body = json.dumps(self.body)
 
             if self.oauth:
                 logging.debug("[%s][OAUTH] Running oauth token request", self.url)
@@ -80,13 +81,6 @@ class Call:
             self.result = res.status_code
             self.result_body = res.json()
             self.elapsed = res.elapsed
-
-            #if print_to_console:
-            #    printer.print_call(self.expect, self.url, self.call_id, res)
-            #    pass
-            #if print_response:
-            #    print(res.json(), '\n')
-
             self.success = True
 
         except json.JSONDecodeError as json_decode_error:

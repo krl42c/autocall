@@ -28,7 +28,7 @@ class CallValidator:
     }
 
     @staticmethod
-    def are_keys_valid(call : dict) -> bool:
+    def are_keys_valid(call : dict) -> tuple:
         invalid_keys = call.keys() - CallValidator.valid_top_level_keys
         return (False, invalid_keys) if invalid_keys else (True, invalid_keys)
     @staticmethod
@@ -50,8 +50,8 @@ class CallValidator:
     def is_method_valid(method : str) -> bool:
         return method in constants.METHODS
     @staticmethod
-    def is_url_valid(url : str) -> bool:
-        return validators.url(url)
+    def is_url_valid(url) -> bool:
+        return bool(validators.url(url))
     @staticmethod
     def is_oauth_valid(node : dict) -> bool:
         return True if node.get('token-url') and node.get('client_id') and node.get('client_secret') else False

@@ -52,3 +52,7 @@ class EntryBuilder:
         
         result_color = Fore.GREEN if result == 'ok' else Fore.RED
         return f'..{result_color} {result} {Style.RESET_ALL} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
+    
+    @staticmethod
+    def err(name: str, exception : Exception):
+        return f'{Fore.RED}Error while running set "{name}": {exception}{Style.RESET_ALL}'
