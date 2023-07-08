@@ -69,7 +69,8 @@ class SetHandler:
             pool = ProcessPoolExecutor(max_workers=10)
             pool.map(Call.execute, call_set.values())
             end_time = time.time() - start_time
-            [print(EntryBuilder.default(call)) for call in call_set.values()]
+            if os.environ.get('NOOUT')  != '1':
+                [print(EntryBuilder.default(call)) for call in call_set.values()]
 
             if os.environ.get('DEBUG') == '1':
                 print(f'All threads ({len(call_set.values())} sets) finished in: {end_time}')
@@ -80,8 +81,9 @@ class SetHandler:
         for _, call in call_set.items():
             call.execute()
         end_time = time.time() - start_time
-        
-        [print(EntryBuilder.default(call)) for call in call_set.values()]
+
+        if os.environ.get('NOOUT')  != '1':
+            [print(EntryBuilder.default(call)) for call in call_set.values()]
         if os.environ.get('DEBUG') == '1':
             print(f'All calls ({len(call_set.values())} sets) finished in: {end_time}')
 
