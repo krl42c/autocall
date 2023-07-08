@@ -5,6 +5,8 @@ name: Install and test with pytest
 
 on:
   push:
+    paths:
+      - autocall/**
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
