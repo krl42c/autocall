@@ -12,7 +12,7 @@ callset = SetHandler.from_yaml('path-to-file.yaml')
 SetHandler.run_set(callset)
 ```
 
-Running with thread support enabled (runs faster on bigger sets):
+Running with thread support enabled (almost always faster):
 ```cli
 $ THREADS=1 ./run.py /path-to-yaml
 ```
