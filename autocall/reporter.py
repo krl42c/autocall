@@ -14,7 +14,7 @@ class ReportHelper:
     @staticmethod
     def response_time_average(call : ac.Call, runs_no = 1):
         times : List[float] = []
-        for i in range(runs_no):
+        for _ in range(runs_no):
             call.execute()
             if call.elapsed:
                 times.append(call.elapsed.total_seconds())

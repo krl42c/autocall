@@ -4,7 +4,7 @@ import logging
 import time
 from random import randrange
 from typing import List
-from autocall import  validator, constants
+from autocall import  validator, constants, env
 from autocall.call import Call
 from autocall.reporter import EntryBuilder, ReportHelper
 
@@ -33,9 +33,10 @@ class SetHandler:
             try:
                 validator.validate_call(call)
             except SetHandler.exception_map as exception:
-                print(EntryBuilder.err(name, exception))
+                if not env.noout:
+                    print(EntryBuilder.err(name, exception))
                 logging.debug("Error validating call set %s", call)
-                if os.environ.get('TEST') == '1':
+                if env.test:
                     raise exception 
                 continue
 
@@ -62,7 +63,7 @@ class SetHandler:
     
     @staticmethod
     def run_set(call_set : dict[str, Call], output : bool = True, html : bool = True):  # call.execute() for each call of the callset
-        if os.environ.get('THREADS') == '1':
+        if env.threads:
             from concurrent.futures import ThreadPoolExecutor, wait
 
             start_time = time.time()
@@ -70,10 +71,10 @@ class SetHandler:
             pool.map(Call.execute, call_set.values())
             end_time = time.time() - start_time
 
-            if os.environ.get('NOOUT')  != '1':
+            if not env.noout:
                 [print(EntryBuilder.default(call)) for call in call_set.values()]
 
-            if os.environ.get('DEBUG') == '1':
+            if env.debug:
                 print(f'All threads ({len(call_set.values())} sets) finished in: {end_time}')
             return
 
@@ -83,9 +84,9 @@ class SetHandler:
             call.execute()
         end_time = time.time() - start_time
 
-        if os.environ.get('NOOUT')  != '1':
+        if not env.noout:
             [print(EntryBuilder.default(call)) for call in call_set.values()]
-        if os.environ.get('DEBUG') == '1':
+        if env.debug:
             print(f'All calls ({len(call_set.values())} sets) finished in: {end_time}')
 
         if html:
