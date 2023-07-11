@@ -69,15 +69,15 @@ class SetHandler:
             start_time = time.time()
             pool = ThreadPoolExecutor(max_workers=10)
             pool.map(Call.execute, call_set.values())
+            pool.shutdown(wait=True)
             end_time = time.time() - start_time
 
             if not env.noout:
-                [print(EntryBuilder.default(call)) for call in call_set.values()]
+                any(print(EntryBuilder.default(call)) for call in call_set.values())
 
             if env.debug:
                 print(f'All threads ({len(call_set.values())} sets) finished in: {end_time}')
             return
-
 
         start_time = time.time()
         for _, call in call_set.items():
@@ -85,7 +85,7 @@ class SetHandler:
         end_time = time.time() - start_time
 
         if not env.noout:
-            [print(EntryBuilder.default(call)) for call in call_set.values()]
+            any(print(EntryBuilder.default(call)) for call in call_set.values())
         if env.debug:
             print(f'All calls ({len(call_set.values())} sets) finished in: {end_time}')
 

@@ -13,11 +13,7 @@ def current_time() -> str:
 class ReportHelper:
     @staticmethod
     def response_time_average(call : ac.Call, runs_no = 1):
-        times : List[float] = []
-        for _ in range(runs_no):
-            call.execute()
-            if call.elapsed:
-                times.append(call.elapsed.total_seconds())
+        times: List[float] = [ call.elapsed.total_seconds() for _ in range(runs_no) if call.execute() and call.elapsed]
         return sum(times) / runs_no
     
     @staticmethod
@@ -46,6 +42,10 @@ class EntryBuilder:
         return EntryBuilder.format(result, call.call_id, call.result, call.expect, call.url, current_time(), runs_no, ReportHelper.response_time_average(call, runs_no))
 
     @staticmethod
+    def err(name: str, exception : Exception):
+        return f'{Fore.RED}Error while running set "{name}": {exception}{Style.RESET_ALL}'
+
+    @staticmethod
     def format(result, id, call_result, expect, url, current_time, runs_no, average, cli_colors = True):
         if not cli_colors:
             return f'.. {result} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
@@ -53,6 +53,3 @@ class EntryBuilder:
         result_color = Fore.GREEN if result == 'ok' else Fore.RED
         return f'..{result_color} {result} {Style.RESET_ALL} - {id}: <{call_result}> <{expect}>      {url}  {current_time}  Average response time with {runs_no} runs: {average}'
     
-    @staticmethod
-    def err(name: str, exception : Exception):
-        return f'{Fore.RED}Error while running set "{name}": {exception}{Style.RESET_ALL}'
