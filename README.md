@@ -69,7 +69,13 @@ calls:
 
 ---
 
-## Running tests
+## Building & Running tests
+
+Build release (generates dist folder and coverage reports inside /build folder)
+
+```cli
+$ make release
+```
 
 Regular pytest tests:
 
