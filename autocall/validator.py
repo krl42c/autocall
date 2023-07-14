@@ -27,22 +27,22 @@ class CallValidator:
         'oauth',
     }
 
-    @staticmethod
-    def are_keys_valid(call : dict) -> tuple:
-        invalid_keys = call.keys() - CallValidator.valid_top_level_keys
+    @classmethod
+    def are_keys_valid(cls, call : dict) -> tuple:
+        invalid_keys = call.keys() - cls.valid_top_level_keys
         return (False, invalid_keys) if invalid_keys else (True, invalid_keys)
-    @staticmethod
-    def are_mandatory_keys_present(call : dict) -> bool:
-        return all(key in call.keys() for key in CallValidator.mandatory_keys)
+    @classmethod
+    def are_mandatory_keys_present(cls, call : dict) -> bool:
+        return all(key in call.keys() for key in cls.mandatory_keys)
+    @classmethod
+    def are_tests_valid(cls, node : dict) -> bool: 
+        return all(x.get('body') and cls.is_json_valid(x.get('body')) for x in node)
     @staticmethod
     def are_headers_valid(headers) -> bool:
         return isinstance(headers, dict)
     @staticmethod
     def is_json_valid(body) -> bool:
         return True if json.loads(body) else False
-    @staticmethod
-    def are_tests_valid(node : dict) -> bool: 
-        return all(x.get('body') and CallValidator.is_json_valid(x.get('body')) for x in node)
     @staticmethod
     def is_http_code_valid(code : int) -> bool:
         return True if code in list(HTTPStatus) else False
