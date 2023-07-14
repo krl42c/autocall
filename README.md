@@ -77,11 +77,17 @@ Regular pytest tests:
 $ make test
 ```
 
+Generate html coverage report:
+```cli
+$ make coverage
+```
+
 For testing against a real server there's an Uvicorn server located in tests/test_server and a run.py file in the root directory.
 
 ```cli
 $ ./run.py /path-to-yaml-file 
 ```
+
 
 
 For debug logs set DEBUG=1 before running.
