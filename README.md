@@ -74,7 +74,7 @@ calls:
 Regular pytest tests:
 
 ```cli
-$ TEST=1 python3 -m pytest tests
+$ make test
 ```
 
 For testing against a real server there's an Uvicorn server located in tests/test_server and a run.py file in the root directory.
