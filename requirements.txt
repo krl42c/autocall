@@ -1,8 +1,7 @@
 requests
 pyyaml
 validators
-fastapi
-uvicorn
+
 colorama
 jinja2
 pytest
