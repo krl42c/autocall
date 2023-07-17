@@ -7,7 +7,7 @@ Automatize network calls using yaml files for testing.
 ## Usage:
 
 ```python
-from autocall.autocall import SetHandler
+from autocall import SetHandler
 callset = SetHandler.from_yaml('path-to-file.yaml')
 SetHandler.run_set(callset)
 ```
