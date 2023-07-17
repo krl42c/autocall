@@ -6,15 +6,25 @@ Automatize network calls using yaml files for testing.
 
 ## Usage:
 
+Running from CLI:
+
+```cli
+$ python3 -m autocall /path-to-yaml
+```
+
+
+Running with thread support enabled (almost always faster):
+```cli
+$ THREADS=1 python3 -m autocall /path-to-yaml
+```
+
+
+From python:
+
 ```python
 from autocall import SetHandler
 callset = SetHandler.from_yaml('path-to-file.yaml')
 SetHandler.run_set(callset)
-```
-
-Running with thread support enabled (almost always faster):
-```cli
-$ THREADS=1 ./run.py /path-to-yaml
 ```
 
 To enable debug prints, set env DEBUG=1, to skip reports while running, set NOOUT=1
